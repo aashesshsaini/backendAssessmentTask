@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
 
 export interface OrderDocument extends Document {
-    product: Schema.Types.ObjectId,
+    course: Schema.Types.ObjectId,
     user: Schema.Types.ObjectId
     status: string;
     amount: number;

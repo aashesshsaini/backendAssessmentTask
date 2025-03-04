@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userProductService } from "../../services";
+import { userCourseService } from "../../services";
 import { successResponse } from "../../utils/response";
 import {
     SUCCESS_MESSAGES,
@@ -7,30 +7,31 @@ import {
 } from "../../config/appConstant";
 import { catchAsync } from "../../utils/universalFunctions";
 
-const getProducts = catchAsync(async (req: Request, res: Response) => {
-    const products = await userProductService.getProducts(req.query);
+const getCourses = catchAsync(async (req: Request, res: Response) => {
+    const courses = await userCourseService.getCourses(req.query);
     return successResponse(
         req,
         res,
         STATUS_CODES.SUCCESS,
         SUCCESS_MESSAGES.SUCCESS,
-        products
+        courses
     );
 });
 
-const addRemoveToCart = catchAsync(async (req: Request, res: Response) => {
-    const orderData = await userProductService.addRemoveToCart(req.body, req.token?.user?._id);
+const courseDetails = catchAsync(async (req: Request, res: Response) => {
+    const courseData = await userCourseService.courseDetails(req.query);
     return successResponse(
         req,
         res,
         STATUS_CODES.SUCCESS,
         SUCCESS_MESSAGES.SUCCESS,
-        orderData
+        courseData
     );
 });
+
 
 const createOrder = catchAsync(async (req: Request, res: Response) => {
-    const orderData = await userProductService.createOrder(req.body, req.token?.user?._id);
+    const orderData = await userCourseService.createOrder(req.body, req.token?.user?._id);
     return successResponse(
         req,
         res,
@@ -41,7 +42,7 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
 });
 
 const webhook = catchAsync(async (req: Request, res: Response) => {
-    const orderData = await userProductService.webhook(req.body);
+    const orderData = await userCourseService.webhook(req.body);
     return successResponse(
         req,
         res,
@@ -51,5 +52,16 @@ const webhook = catchAsync(async (req: Request, res: Response) => {
     );
 });
 
+const myCourses = catchAsync(async (req: Request, res: Response) => {
+    const myCourseListing = await userCourseService.myCourses(req.query, req.token?.user?._id);
+    return successResponse(
+        req,
+        res,
+        STATUS_CODES.SUCCESS,
+        SUCCESS_MESSAGES.SUCCESS,
+        myCourseListing
+    );
+});
 
-export default { getProducts, createOrder, addRemoveToCart, webhook }
+
+export default { getCourses, courseDetails, createOrder, webhook, myCourses }

@@ -1,19 +1,26 @@
 import mongoose, { Schema } from "mongoose";
-import { ProductDocument } from "../interfaces/product.interface";
+import { CourseDocument } from "../interfaces/course.interface";
 
-const productSchema = new Schema<ProductDocument>(
+const courseSchema = new Schema<CourseDocument>(
     {
-        productName: {
+        title: {
             type: String,
             trim: true,
             required: true
         },
-        productImages: [{
+        description: {
             type: String,
             trim: true,
             required: true
-        }],
-        stock: {
+        },
+        video: {
+            type: String,
+            required: true
+        },
+        duration: {
+            type: String
+        },
+        priceWithOffer: {
             type: Number,
             required: true
         },
@@ -21,10 +28,6 @@ const productSchema = new Schema<ProductDocument>(
             type: Number,
             required: true
         },
-        cartUsers: [{
-            type: Schema.Types.ObjectId,
-            ref: 'users',
-        }],
         isDeleted: {
             type: Boolean,
             default: false
@@ -33,6 +36,6 @@ const productSchema = new Schema<ProductDocument>(
     { timestamps: true }
 );
 
-const Product = mongoose.model<ProductDocument>("products", productSchema);
+const Course = mongoose.model<CourseDocument>("courses", courseSchema);
 
-export default Product;
+export default Course;

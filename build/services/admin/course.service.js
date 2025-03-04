@@ -9,25 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderListing = exports.deleteProduct = exports.updateProduct = exports.getProduct = exports.createProduct = void 0;
+exports.orderListing = exports.deleteCourse = exports.updateCourse = exports.getCourse = exports.createCourse = void 0;
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
 const universalFunctions_1 = require("../../utils/universalFunctions");
-const createProduct = (body) => __awaiter(void 0, void 0, void 0, function* () {
+const createCourse = (body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(body, "body.........");
-        const productData = yield models_1.Product.create(body);
-        console.log(productData);
-        return productData;
+        const CourseData = yield models_1.Course.create(body);
+        console.log(CourseData);
+        return CourseData;
     }
     catch (error) {
         console.log(error, "error...........");
         throw error;
     }
 });
-exports.createProduct = createProduct;
-const getProduct = (query) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createCourse = createCourse;
+const getCourse = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const { page = 0, limit = 10, search } = query;
     try {
         var filter = {
@@ -35,51 +35,52 @@ const getProduct = (query) => __awaiter(void 0, void 0, void 0, function* () {
         };
         if (search) {
             filter = Object.assign(Object.assign({}, filter), { $or: [
-                    { productName: { $regex: RegExp(search, "i") } },
+                    { title: { $regex: RegExp(search, "i") } },
+                    { description: { $regex: RegExp(search, "i") } },
                 ] });
         }
-        const [productListing, productCount] = yield Promise.all([
-            models_1.Product.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)),
-            models_1.Product.countDocuments(filter),
+        const [CourseListing, CourseCount] = yield Promise.all([
+            models_1.Course.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)),
+            models_1.Course.countDocuments(filter),
         ]);
-        return { productListing, productCount };
+        return { CourseListing, CourseCount };
     }
     catch (error) {
         console.log(error, "error...........");
         throw error;
     }
 });
-exports.getProduct = getProduct;
-const updateProduct = (body) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCourse = getCourse;
+const updateCourse = (body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { productId, productName, productImages, stock, price } = body;
-        const updatedProductData = yield models_1.Product.findOneAndUpdate({ _id: productId, isDeleted: false }, { productName, productImages, stock, price }, { lean: true, new: true });
-        if (!updatedProductData) {
-            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.WRONG_PASSWORD);
+        const { courseId, title, description, video, duration, price, priceWithOffer } = body;
+        const updatedCourseData = yield models_1.Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, video, duration, price, priceWithOffer }, { lean: true, new: true });
+        if (!updatedCourseData) {
+            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.COURSE_NOT_FOUND);
         }
-        return updatedProductData;
+        return updatedCourseData;
     }
     catch (error) {
         console.log(error, "error...........");
         throw error;
     }
 });
-exports.updateProduct = updateProduct;
-const deleteProduct = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productId } = query;
+exports.updateCourse = updateCourse;
+const deleteCourse = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { CourseId } = query;
     try {
-        const deletedProduct = yield models_1.Product.findByIdAndUpdate(productId, { isDeleted: true }, { new: true, lean: true });
-        if (!deletedProduct) {
-            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+        const deletedCourse = yield models_1.Course.findByIdAndUpdate(CourseId, { isDeleted: true }, { new: true, lean: true });
+        if (!deletedCourse) {
+            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.COURSE_NOT_FOUND);
         }
-        return { deletedProductData: "Product Delete Successfully" };
+        return { deletedCourseData: "Course Delete Successfully" };
     }
     catch (error) {
         console.log(error, "error...........");
         throw error;
     }
 });
-exports.deleteProduct = deleteProduct;
+exports.deleteCourse = deleteCourse;
 const orderListing = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const { page = 0, limit = 10, search } = query;
     try {
@@ -88,7 +89,7 @@ const orderListing = (query) => __awaiter(void 0, void 0, void 0, function* () {
             isPayment: true
         };
         const [orderListing, orderCount] = yield Promise.all([
-            models_1.Order.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)).populate([{ path: "product", select: "productName" }, { path: "user", select: "email firstName lastName" }]),
+            models_1.Order.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)).populate([{ path: "Course", select: "CourseName" }, { path: "user", select: "email firstName lastName" }]),
             models_1.Order.countDocuments(filter),
         ]);
         return { orderListing, orderCount };

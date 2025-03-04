@@ -1,19 +1,18 @@
-import { Order, Product, Token, User } from "../../models";
+import { Order, Course, Token, User } from "../../models";
 import { STATUS_CODES, ERROR_MESSAGES, CART_ACTION_CASE } from "../../config/appConstant";
 import { OperationalError } from "../../utils/error";
 import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
 import redisClient from '../../utils/redis';
-import { ObjectId } from "mongoose";
 import Stripe from "stripe"
 import config from "../../config/config";
 import { orderPlacedEmail } from "../../libs/sendMails";
-import { UserDocument } from "../../interfaces";
+import { ObjectId } from "mongoose";
 const stripeInstance = new Stripe(config.stripeSecretKey);
 
-const getProducts = async (query: Dictionary) => {
+const getCourses = async (query: Dictionary) => {
     const { page = 0, limit = 10, search } = query
-    const cacheKey = `products:page=${page}:limit=${limit}:search=${search || 'all'}`;
+    const cacheKey = `Courses:page=${page}:limit=${limit}:search=${search || 'all'}`;
     try {
         const cachedData = await redisClient.get(cacheKey);
         if (cachedData) {
@@ -23,7 +22,9 @@ const getProducts = async (query: Dictionary) => {
         var filter: {
             isDeleted: boolean;
             $or?: Array<
-                | { productName?: { $regex: RegExp } }
+                | { title?: { $regex: RegExp } }
+                | { description?: { $regex: RegExp } }
+
             >;
         } = {
             isDeleted: false,
@@ -33,16 +34,17 @@ const getProducts = async (query: Dictionary) => {
             filter = {
                 ...filter,
                 $or: [
-                    { productName: { $regex: RegExp(search, "i") } },
+                    { title: { $regex: RegExp(search, "i") } },
+                    { description: { $regex: RegExp(search, "i") } },
                 ],
             };
         }
-        const [productListing, productCount] = await Promise.all([
-            Product.find(filter, { cartUsers: 0 }, paginationOptions(page, limit)),
-            Product.countDocuments(filter),
+        const [CourseListing, CourseCount] = await Promise.all([
+            Course.find(filter, { title: 1, video: 1, duration: 1, price: 1, priceWithOffer: 1 }, paginationOptions(page, limit)),
+            Course.countDocuments(filter),
         ]);
 
-        const result = { productListing, productCount };
+        const result = { CourseListing, CourseCount };
         const redisData = await redisClient.setEx(cacheKey, 36, JSON.stringify(result));
         return result;
     } catch (error: any) {
@@ -51,75 +53,42 @@ const getProducts = async (query: Dictionary) => {
     }
 }
 
-const addRemoveToCart = async (body: Dictionary, userId: Dictionary) => {
-    const { productId, actionCase } = body
+const courseDetails = async (query: Dictionary) => {
+    const { courseId } = query
     try {
-        const productData = await Product.findOne({ _id: productId, isDeleted: false })
-        if (!productData) {
+        const courseData = await Course.findOne({ _id: courseId, isDeleted: false }).lean()
+        if (!courseData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,
-                ERROR_MESSAGES.PRODUCT_NOT_FOUND
+                ERROR_MESSAGES.COURSE_NOT_FOUND
             )
         }
-        console.log(productData, "productData.........")
-        switch (actionCase) {
-            case CART_ACTION_CASE.REMOVETOCART:
-                await Product.findByIdAndUpdate(
-                    productId,
-                    { $pull: { cartUsers: userId } }
-                );
-                return { message: "Removed the product from the cart" };
-
-            case CART_ACTION_CASE.ADDTOCART:
-                await Product.findByIdAndUpdate(
-                    productId,
-                    { $addToSet: { cartUsers: userId } }
-                );
-                return { message: "Added the product to the cart" };
-
-            default:
-                throw new OperationalError(
-                    STATUS_CODES.ACTION_FAILED,
-                    "Invalid action case"
-                );
-        }
-    } catch (error: any) {
-        console.log(error, "error...........")
+        return courseData
+    } catch (error) {
+        console.log(error)
         throw error
     }
 }
 
 const createOrder = async (body: Dictionary, userId: ObjectId) => {
-    const { productId, quantity } = body
+    const { CourseId } = body
     try {
-        const productData = await Product.findOne({ _id: productId, isDeleted: false })
-        if (!productData) {
+        const courseData = await Course.findOne({ _id: CourseId, isDeleted: false })
+        if (!courseData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,
-                ERROR_MESSAGES.PRODUCT_NOT_FOUND
+                ERROR_MESSAGES.COURSE_NOT_FOUND
             )
         }
-        if (!productData.cartUsers.includes(userId)) {
-            throw new OperationalError(
-                STATUS_CODES.ACTION_FAILED,
-                "Please add the product in your cart"
-            )
-        }
-        if (productData.stock < quantity) {
-            throw new OperationalError(
-                STATUS_CODES.ACTION_FAILED,
-                'Insufficient Stock'
-            )
-        }
-        const amount = productData.price * quantity
-        const orderData = await Order.create({ product: productId, user: userId, amount })
+
+        const amount = courseData.priceWithOffer
+        const orderData = await Order.create({ Course: CourseId, user: userId, amount })
         const orderIdForMetaData = orderData._id as ObjectId;
 
         const metadata: Dictionary = {
             userId: userId.toString() || "",
             amount: (amount * 100).toString(),
             orderId: orderIdForMetaData.toString(),
-            quantity: quantity.toString()
         };
 
         const session = await stripeInstance.checkout.sessions.create({
@@ -132,11 +101,11 @@ const createOrder = async (body: Dictionary, userId: ObjectId) => {
                     price_data: {
                         currency: "usd",
                         product_data: {
-                            name: "e-commerce order",
+                            name: "grow with Pankaj order",
                         },
-                        unit_amount: amount * 100, // Convert price to cents
+                        unit_amount: amount * 100,
                     },
-                    quantity: quantity,
+                    quantity: 1,
                 },
             ],
             payment_intent_data: {
@@ -145,6 +114,7 @@ const createOrder = async (body: Dictionary, userId: ObjectId) => {
             metadata: metadata,
             mode: "payment",
         });
+
         return { orderData, session }
     } catch (error: any) {
         console.log(error, "error...........")
@@ -167,12 +137,11 @@ const webhook = async (event: Dictionary) => {
                         "Order not found"
                     );
                 }
-                const [userData, ProductUpdatedData] = await Promise.all([
+                const [userData, CourseUpdatedData] = await Promise.all([
                     User.findById(userId) as Dictionary,
-                    Product.findByIdAndUpdate(orderData.product, { $inc: { stock: - (Number(quantity)) } }) as Dictionary,
                     Order.updateOne({ _id: orderId }, { isPayment: true, paymentIntentId }) as Dictionary,
                 ]);
-                orderPlacedEmail(userData?.email, userData?.firstName, ProductUpdatedData?.productName, orderData.amount, quantity)
+                orderPlacedEmail(userData?.email, userData?.firstName, CourseUpdatedData?.CourseName, orderData.amount, quantity)
                 break;
             default:
                 console.log(`Unhandled event type ${event.type}`);
@@ -184,4 +153,18 @@ const webhook = async (event: Dictionary) => {
 
 };
 
-export { getProducts, createOrder, addRemoveToCart, webhook }
+const myCourses = async (query: Dictionary, userId: ObjectId) => {
+    const { page, limit } = query
+    try {
+        const [myCoursesLiting, myCoursesCount] = await Promise.all([
+            Order.find({ user: userId, isPayment: true, isDeleted: false }, {}, paginationOptions(page, limit)),
+            Order.countDocuments({ user: userId, isPayment: true, isDeleted: false })
+        ])
+        return { myCoursesLiting, myCoursesCount }
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+export { getCourses, courseDetails, createOrder, webhook, myCourses }

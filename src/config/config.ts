@@ -26,6 +26,9 @@ const envVarsSchema = Joi.object({
   API_BASE_URL: Joi.string().required().description("Api base url"),
   ADMIN_BASE_URL: Joi.string().description("Admin pannel base url"),
   STRIPE_SECRET_KEY: Joi.string().description("secret key for stripe"),
+  TWILLIO_ACCOUNT_SID: Joi.string().description("account sid for twillio"),
+  TWILLIO_AUTH_TOKEN: Joi.string().description('secret key for twillio'),
+  PHONE_NUMBER: Joi.string().description("phon enumber for twilio"),
   ENVIRONMENT: Joi.string().valid("development", "production").required()
 }).unknown();
 
@@ -58,6 +61,7 @@ const config = {
   baseurl: envVars.API_BASE_URL,
   serverurl: envVars.SERVER_BASE_URL,
   smtp: { email: envVars.EMAIL, password: envVars.PASSWORD },
+  twilio: { accountSID: envVars.TWILLIO_ACCOUNT_SID, accountSecret: envVars.TWILLIO_AUTH_TOKEN, phoneNumber: envVars.PHONE_NUMBER },
   stripeSecretKey: envVars.STRIPE_SECRET_KEY,
   env: envVars.ENVIRONMENT
 };

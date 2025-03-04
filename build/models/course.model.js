@@ -23,10 +23,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userCourseService = exports.adminCourseService = exports.userManageService = exports.adminAuthService = exports.userAuthService = exports.tokenService = void 0;
-exports.tokenService = __importStar(require("./token.service"));
-exports.userAuthService = __importStar(require("./user/auth.service"));
-exports.adminAuthService = __importStar(require("./admin/auth.service"));
-exports.userManageService = __importStar(require("./admin/userManage.service"));
-exports.adminCourseService = __importStar(require("./admin/course.service"));
-exports.userCourseService = __importStar(require("./user/course.service"));
+const mongoose_1 = __importStar(require("mongoose"));
+const courseSchema = new mongoose_1.Schema({
+    title: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    description: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    video: {
+        type: String,
+        required: true
+    },
+    duration: {
+        type: String
+    },
+    priceWithOffer: {
+        type: Number,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
+}, { timestamps: true });
+const Course = mongoose_1.default.model("courses", courseSchema);
+exports.default = Course;

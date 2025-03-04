@@ -2,8 +2,9 @@ import express, { Router } from "express"
 import adminAuth from "./admin/auth.routes"
 import userAuth from "./user/auth.routes"
 import userManage from "./admin/userManage.routes"
-import adminProductManage from "./admin//product.routes"
-import userProduct from "./user/product.routes"
+import adminProductManage from "./admin/course.routes"
+import userProduct from "./user/course.routes"
+import userStatic from "./static.routes"
 
 const router: Router = express.Router();
 
@@ -27,6 +28,10 @@ const defaultRoutes = [
   {
     path: "/user/product",
     route: userProduct,
+  },
+  {
+    path: "/static",
+    route: userStatic,
   },
 ];
 

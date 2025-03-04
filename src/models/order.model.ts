@@ -4,9 +4,9 @@ import { ORDER_STATUS } from "../config/appConstant";
 
 const orderSchema = new Schema<OrderDocument>(
     {
-        product: {
+        course: {
             type: Schema.Types.ObjectId,
-            ref: 'products',
+            ref: 'courses',
             required: true
         },
         user: {

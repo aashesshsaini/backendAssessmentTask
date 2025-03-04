@@ -5,33 +5,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const joi_1 = __importDefault(require("joi"));
 const appConstant_1 = require("../../config/appConstant");
-const createProduct = {
+const createCourse = {
     body: joi_1.default.object().keys({
-        productName: joi_1.default.string().required(),
-        productImages: joi_1.default.array().items(joi_1.default.string().required()),
-        stock: joi_1.default.number().required(),
-        price: joi_1.default.number().required()
+        title: joi_1.default.string().required(),
+        description: joi_1.default.string().required(),
+        video: joi_1.default.string().required(),
+        duration: joi_1.default.string().required(),
+        price: joi_1.default.number().required(),
+        priceWithOffer: joi_1.default.number().required()
     })
 };
-const getProduct = {
+const getCourse = {
     query: joi_1.default.object().keys({
         page: appConstant_1.JOI.PAGE,
         limit: appConstant_1.JOI.LIMIT,
         search: joi_1.default.string().allow('')
     })
 };
-const updateProduct = {
+const updateCourse = {
     body: joi_1.default.object().keys({
-        productId: appConstant_1.JOI.OBJECTID,
-        productName: joi_1.default.string(),
-        productImages: joi_1.default.array().items(joi_1.default.string()),
-        stock: joi_1.default.number(),
-        price: joi_1.default.number()
+        CourseId: appConstant_1.JOI.OBJECTID,
+        title: joi_1.default.string(),
+        description: joi_1.default.string(),
+        video: joi_1.default.string(),
+        duration: joi_1.default.string(),
+        price: joi_1.default.number(),
+        priceWithOffer: joi_1.default.number()
     })
 };
-const deleteProduct = {
+const deleteCourse = {
     query: joi_1.default.object().keys({
-        productId: appConstant_1.JOI.OBJECTID
+        CourseId: appConstant_1.JOI.OBJECTID
     })
 };
 const orderListing = {
@@ -41,4 +45,4 @@ const orderListing = {
         search: joi_1.default.string().allow('')
     })
 };
-exports.default = { createProduct, getProduct, updateProduct, deleteProduct, orderListing };
+exports.default = { createCourse, getCourse, updateCourse, deleteCourse, orderListing };

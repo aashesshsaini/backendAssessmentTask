@@ -10,139 +10,56 @@ import config from "../../config/config";
 import { Dictionary } from "../../types";
 import { TokenDocument, UserDocument } from "../../interfaces";
 import { forgotPasswordEmail } from "../../libs/sendMails";
-import { ObjectId } from "mongoose";
+import { ObjectId, trusted } from "mongoose";
 const stripeInstance = new Stripe(config.stripeSecretKey);
 
 
-const signup = async (body: UserDocument) => {
-  const { firstName, lastName, email, password, mobileNumber, countryCode } =
-    body;
-  try {
-    const [existinguserByEmail, existinguserByMobileNumber] = await Promise.all([
-      User.findOne({ email: email, isDeleted: false }),
-      User.findOne({
-        mobileNumber: mobileNumber,
-        isDeleted: false,
-      }),
-    ]);
-
-    if (existinguserByEmail) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.EMAIL_ALREADY_EXIST
-      );
-    }
-
-    if (existinguserByMobileNumber) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.MOBILE_ALREADY_EXIST
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      mobileNumber,
-      countryCode,
-    });
-
-    const stripeCustomer = await stripeInstance.customers.create({
-      name: firstName,
-      email,
-      phone: `${countryCode}${mobileNumber}`,
-    });
-
-    user.stripeCustomerId = stripeCustomer.id;
-    await user.save();
-    return user;
-  } catch (error: any) {
-    console.log(error, "error...........")
-    throw error
-  }
-};
-
-
 const login = async (body: Dictionary) => {
-  const { email, password, mobileNumber } = body;
+  const { mobileNumber } = body;
   console.log(body, "body............");
   try {
-    if (email) {
-      var user = await User.findOne({ email: email, isDeleted: false });
-    } else {
-      var user = await User.findOne({ mobileNumber, isDeleted: false });
-    }
-
+    const user = await User.findOneAndUpdate({ mobileNumber }, { isDeleted: false }, { upsert: true, new: true });
     console.log(user);
-    if (!user) {
-      throw new OperationalError(
-        STATUS_CODES.NOT_FOUND,
-        ERROR_MESSAGES.USER_NOT_FOUND
-      );
-    }
     if (user.isBlocked) {
       throw new OperationalError(
         STATUS_CODES.NOT_FOUND,
         ERROR_MESSAGES.ACCOUNT_BLOCKED
       );
     }
-    console.log(user, "user.........");
-    if (user.isDeleted) {
-      throw new OperationalError(
-        STATUS_CODES.NOT_FOUND,
-        ERROR_MESSAGES.ACCOUNT_DELETED
-      );
-    }
-    const matchPassword = await bcrypt.compare(password, user.password);
+    // const stripeCustomer = await stripeInstance.customers.create({
+    //       name: firstName,
+    //       email,
+    //       phone: `${countryCode}${mobileNumber}`,
+    //     });
 
-    if (!matchPassword) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.WRONG_PASSWORD
-      );
-    }
-    const userData = await User.findOne({ email }) as UserDocument
-    return userData;
-  } catch (error: any) {
-    console.log(error, "error...........")
-    throw error
-  }
-};
-
-const changePassword = async (
-  body: Dictionary,
-  token: TokenDocument
-) => {
-  const { newPassword, oldPassword } = body;
-  try {
-    const user = await User.findById(token?.user);
-    if (!user) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.USER_NOT_FOUND
-      );
-    }
-    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
-    console.log(passwordMatch);
-    if (!passwordMatch) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.WRONG_PASSWORD
-      );
-    }
-    const userNewPassword = await bcrypt.hash(newPassword, 10);
-    const updatePassword = { password: userNewPassword };
-    Object.assign(user, updatePassword);
-    await user.save();
+    //     user.stripeCustomerId = stripeCustomer.id;
+    //     await user.save();
+    //     return user;
     return user;
   } catch (error: any) {
     console.log(error, "error...........")
     throw error
   }
 };
+
+const createProfile = async (body: Dictionary, userId: ObjectId) => {
+  const { fullName, email, age, gender } = body
+  try {
+    const updatedUserData = await User.findByIdAndUpdate(userId, { fullName, email, age, gender, isCreatedProfileUser: true }, { new: true }) as UserDocument
+    const stripeCustomer = await stripeInstance.customers.create({
+      name: fullName,
+      email,
+      phone: `${updatedUserData?.countryCode}${updatedUserData?.mobileNumber}`,
+    });
+
+    updatedUserData.stripeCustomerId = stripeCustomer.id;
+    await updatedUserData?.save();
+    return updatedUserData;
+  } catch (error: any) {
+    console.log(error)
+    throw new error
+  }
+}
 
 const deleteAccount = async (user: Dictionary, query: Dictionary) => {
   const { password } = query;
@@ -185,23 +102,21 @@ const logout = async (userId: ObjectId) => {
   await Token.updateMany({ user: userId }, { isDeleted: false });
 };
 
-const editProfile = async (user: ObjectId, body: UserDocument) => {
+const editProfile = async (userId: ObjectId, body: UserDocument) => {
   const {
-    firstName,
-    lastName,
+    fullName,
     email,
-    mobileNumber,
-    countryCode,
+    age,
+    gender
   } = body;
   try {
     const updatedProfileData = await User.findByIdAndUpdate(
-      user,
+      userId,
       {
-        firstName,
-        lastName,
+        fullName,
         email,
-        mobileNumber,
-        countryCode,
+        age,
+        gender
       },
       { lean: true, new: true }
     );
@@ -219,53 +134,30 @@ const editProfile = async (user: ObjectId, body: UserDocument) => {
 };
 
 
-const forgotPassword = async (body: UserDocument) => {
-  const { email } = body;
-  try {
-    const userData = await User.findOne({ email: email });
-    const token = await Token.findOne({ user: userData?._id }) as TokenDocument;
-    console.log(userData, "userData...........");
-    if (!userData) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.USER_NOT_FOUND
-      );
-    }
-    await forgotPasswordEmail(email, token.token, userData.firstName);
-  } catch (error: any) {
-    console.log(error, "error...........")
-    throw error
-  }
-};
-
-const resetPassword = async (userId: ObjectId, newPassword: string) => {
-  try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    console.log(hashedPassword);
-    const userData = await User.findOneAndUpdate(
-      { _id: userId },
-      { $set: { password: hashedPassword } },
-      { lean: true, new: true }
-    );
-    return userData;
-  } catch (error: any) {
-    console.log(error, "error...........")
-    throw error
-  }
-};
-
 const userInfo = async (user: Dictionary, query: Dictionary) => {
   return user
 };
 
+const pushNotificationStatus = async (user: UserDocument) => {
+  try {
+    if (user.isPushNotification) {
+      user.isPushNotification = false
+    } else if (!user.isPushNotification) {
+      user.isPushNotification = true
+    }
+    return user
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
 export {
-  signup,
   login,
-  changePassword,
+  createProfile,
   deleteAccount,
   logout,
   editProfile,
-  forgotPassword,
-  resetPassword,
   userInfo,
+  pushNotificationStatus
 };
