@@ -47,6 +47,28 @@ const login = catchAsync(async (req: Request, res: Response) => {
   );
 });
 
+const verifyOtp = catchAsync(async (req: Request, res: Response) => {
+  await userAuthService.verifyOtp(req.body.code, req.token._id);
+
+  return successResponse(
+    req,
+    res,
+    STATUS_CODES.SUCCESS,
+    SUCCESS_MESSAGES.SUCCESS
+  );
+});
+
+const resendOtp = catchAsync(async (req: Request, res: Response) => {
+  await userAuthService.resendOtp(req.token?.user);
+
+  return successResponse(
+    req,
+    res,
+    STATUS_CODES.SUCCESS,
+    SUCCESS_MESSAGES.SUCCESS
+  );
+});
+
 const createProfile = catchAsync(async (req: Request, res: Response) => {
   const userData = await userAuthService.createProfile(req.body, req.token.user._id) as UserDocument;
 
@@ -126,6 +148,8 @@ const pushNotificationStatus = catchAsync(async (req: Request, res: Response) =>
 
 export default {
   login,
+  verifyOtp,
+  resendOtp,
   createProfile,
   deleteAccount,
   logout,

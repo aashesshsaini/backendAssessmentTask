@@ -10,6 +10,20 @@ const router: Router = express.Router();
 
 router.post("/login", validate(validation.login), userAuthController.login);
 
+router.post(
+  "/verifyOtp",
+  auth(USER_TYPE.USER),
+  validate(validation.verifyOtp),
+  userAuthController.verifyOtp
+);
+
+router.post(
+  "/resendOtp",
+  auth(USER_TYPE.USER),
+  validate(validation.resendOtp),
+  userAuthController.resendOtp
+);
+
 router.post('/createProfile', validate(validation.createProfile), userAuthController.createProfile)
 
 router.delete(

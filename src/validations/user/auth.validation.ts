@@ -14,6 +14,16 @@ const login = {
   }),
 };
 
+const verifyOtp = {
+  body: Joi.object().keys({
+    code: Joi.string().required(),
+  }),
+};
+
+const resendOtp = {
+  body: Joi.object().keys({}),
+};
+
 const createProfile = {
   body: Joi.object().keys({
     fullName: Joi.string().required(),
@@ -57,6 +67,8 @@ const pushNotificationStatus = {
 
 export default {
   login,
+  verifyOtp,
+  resendOtp,
   createProfile,
   deleteAccount,
   logout,

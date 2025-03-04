@@ -28,6 +28,15 @@ const login = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 
         userData: formatUserData,
     });
 }));
+const verifyOtp = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield services_1.userAuthService.verifyOtp(req.body.code, req.token._id);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS);
+}));
+const resendOtp = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    yield services_1.userAuthService.resendOtp((_a = req.token) === null || _a === void 0 ? void 0 : _a.user);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS);
+}));
 const createProfile = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = yield services_1.userAuthService.createProfile(req.body, req.token.user._id);
     const formatUserData = (0, formatResponse_1.formatSignUpUser)(userData);
@@ -63,6 +72,8 @@ const pushNotificationStatus = (0, universalFunctions_1.catchAsync)((req, res) =
 }));
 exports.default = {
     login,
+    verifyOtp,
+    resendOtp,
     createProfile,
     deleteAccount,
     logout,

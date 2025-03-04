@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pushNotificationStatus = exports.userInfo = exports.editProfile = exports.logout = exports.deleteAccount = exports.createProfile = exports.login = void 0;
+exports.pushNotificationStatus = exports.userInfo = exports.editProfile = exports.logout = exports.deleteAccount = exports.createProfile = exports.resendOtp = exports.verifyOtp = exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
@@ -45,6 +45,25 @@ const login = (body) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const verifyOtp = (code, tokenId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const tokenData = (yield models_1.Token.findOne({
+        _id: tokenId,
+        isDeleted: false,
+    }));
+    console.log(code);
+    if (((_a = tokenData === null || tokenData === void 0 ? void 0 : tokenData.otp) === null || _a === void 0 ? void 0 : _a.code) !== code) {
+        throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, "OTP is Incorrect");
+    }
+    const userData = yield models_1.User.findByIdAndUpdate(tokenData.user, { isVerified: true }, { lean: true, new: true });
+});
+exports.verifyOtp = verifyOtp;
+const resendOtp = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const otp = { code: "111111", expiresAt: "2024-09-11T13:24:23.676Z" };
+    // const otp = await sendOtp(userData?.mobileNumber as string, userData?.countryCode as string) as { code: string, expiresAt: string }
+    const updateOtpInToken = yield models_1.Token.findOneAndUpdate({ user: user._id, isDeleted: false }, { $set: { otp: otp } });
+});
+exports.resendOtp = resendOtp;
 const createProfile = (body, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const { fullName, email, age, gender } = body;
     try {

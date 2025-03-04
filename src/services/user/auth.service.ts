@@ -11,6 +11,7 @@ import { Dictionary } from "../../types";
 import { TokenDocument, UserDocument } from "../../interfaces";
 import { forgotPasswordEmail } from "../../libs/sendMails";
 import { ObjectId, trusted } from "mongoose";
+import sendOtp from "../../libs/sendOtp";
 const stripeInstance = new Stripe(config.stripeSecretKey);
 
 
@@ -40,6 +41,31 @@ const login = async (body: Dictionary) => {
     console.log(error, "error...........")
     throw error
   }
+};
+
+const verifyOtp = async (code: string, tokenId: ObjectId) => {
+  const tokenData = (await Token.findOne({
+    _id: tokenId,
+    isDeleted: false,
+  })) as TokenDocument;
+  console.log(code);
+  if (tokenData?.otp?.code !== code) {
+    throw new OperationalError(STATUS_CODES.ACTION_FAILED, "OTP is Incorrect");
+  }
+  const userData = await User.findByIdAndUpdate(
+    tokenData.user,
+    { isVerified: true },
+    { lean: true, new: true }
+  );
+};
+
+const resendOtp = async (user: Dictionary) => {
+  const otp = { code: "111111", expiresAt: "2024-09-11T13:24:23.676Z" };
+  // const otp = await sendOtp(userData?.mobileNumber as string, userData?.countryCode as string) as { code: string, expiresAt: string }
+  const updateOtpInToken = await Token.findOneAndUpdate(
+    { user: user._id, isDeleted: false },
+    { $set: { otp: otp } }
+  );
 };
 
 const createProfile = async (body: Dictionary, userId: ObjectId) => {
@@ -154,6 +180,8 @@ const pushNotificationStatus = async (user: UserDocument) => {
 
 export {
   login,
+  verifyOtp,
+  resendOtp,
   createProfile,
   deleteAccount,
   logout,

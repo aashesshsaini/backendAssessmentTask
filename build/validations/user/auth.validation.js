@@ -17,6 +17,14 @@ const login = {
         deviceType: appConstant_1.JOI.DEVICE_TYPE
     }),
 };
+const verifyOtp = {
+    body: joi_1.default.object().keys({
+        code: joi_1.default.string().required(),
+    }),
+};
+const resendOtp = {
+    body: joi_1.default.object().keys({}),
+};
 const createProfile = {
     body: joi_1.default.object().keys({
         fullName: joi_1.default.string().required(),
@@ -50,6 +58,8 @@ const pushNotificationStatus = {
 };
 exports.default = {
     login,
+    verifyOtp,
+    resendOtp,
     createProfile,
     deleteAccount,
     logout,
