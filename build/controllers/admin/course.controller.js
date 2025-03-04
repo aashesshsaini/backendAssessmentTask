@@ -29,8 +29,12 @@ const deleteCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaite
     const deleteCourse = yield services_1.adminCourseService.deleteCourse(req.query);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, deleteCourse);
 }));
+const courseDetails = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const courseData = yield services_1.adminCourseService.courseDetails(req.query);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, courseData);
+}));
 const orderListing = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const Courses = yield services_1.adminCourseService.orderListing(req.query);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, Courses);
 }));
-exports.default = { createCourse, getCourse, updateCourse, deleteCourse, orderListing };
+exports.default = { createCourse, getCourse, updateCourse, deleteCourse, courseDetails, orderListing };

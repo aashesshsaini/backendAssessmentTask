@@ -26,9 +26,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const appConstant_1 = require("../config/appConstant");
 const orderSchema = new mongoose_1.Schema({
-    product: {
+    course: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'products',
+        ref: 'courses',
         required: true
     },
     user: {

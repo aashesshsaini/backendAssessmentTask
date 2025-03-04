@@ -24,7 +24,7 @@ const getCourse = {
 };
 const updateCourse = {
     body: joi_1.default.object().keys({
-        CourseId: appConstant_1.JOI.OBJECTID,
+        courseId: appConstant_1.JOI.OBJECTID,
         title: joi_1.default.string(),
         description: joi_1.default.string(),
         video: joi_1.default.string(),
@@ -35,7 +35,12 @@ const updateCourse = {
 };
 const deleteCourse = {
     query: joi_1.default.object().keys({
-        CourseId: appConstant_1.JOI.OBJECTID
+        courseId: appConstant_1.JOI.OBJECTID
+    })
+};
+const courseDetails = {
+    query: joi_1.default.object().keys({
+        courseId: appConstant_1.JOI.OBJECTID
     })
 };
 const orderListing = {
@@ -45,4 +50,4 @@ const orderListing = {
         search: joi_1.default.string().allow('')
     })
 };
-exports.default = { createCourse, getCourse, updateCourse, deleteCourse, orderListing };
+exports.default = { createCourse, getCourse, updateCourse, deleteCourse, courseDetails, orderListing };

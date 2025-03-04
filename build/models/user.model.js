@@ -25,22 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const userSchema = new mongoose_1.Schema({
-    firstName: {
-        type: String,
-        trim: true,
-        required: true
-    },
-    lastName: {
+    fullName: {
         type: String,
         trim: true,
     },
     email: {
         type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
     },
     mobileNumber: {
         type: String,
@@ -48,8 +38,22 @@ const userSchema = new mongoose_1.Schema({
     countryCode: {
         type: String,
     },
+    age: {
+        type: Number
+    },
+    gender: {
+        type: String
+    },
     stripeCustomerId: { type: String },
     isBlocked: {
+        type: Boolean,
+        default: false,
+    },
+    isCreatedProfileUser: {
+        type: Boolean,
+        default: false,
+    },
+    isPushNotification: {
         type: Boolean,
         default: false,
     },

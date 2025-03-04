@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderListing = exports.deleteCourse = exports.updateCourse = exports.getCourse = exports.createCourse = void 0;
+exports.orderListing = exports.courseDetails = exports.deleteCourse = exports.updateCourse = exports.getCourse = exports.createCourse = void 0;
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
@@ -66,10 +66,25 @@ const updateCourse = (body) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.updateCourse = updateCourse;
-const deleteCourse = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const { CourseId } = query;
+const courseDetails = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = query;
     try {
-        const deletedCourse = yield models_1.Course.findByIdAndUpdate(CourseId, { isDeleted: true }, { new: true, lean: true });
+        const courseData = yield models_1.Course.findOne({ _id: courseId, isDeleted: false }).lean();
+        if (!courseData) {
+            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.COURSE_NOT_FOUND);
+        }
+        return courseData;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+});
+exports.courseDetails = courseDetails;
+const deleteCourse = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = query;
+    try {
+        const deletedCourse = yield models_1.Course.findByIdAndUpdate(courseId, { isDeleted: true }, { new: true, lean: true });
         if (!deletedCourse) {
             throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.COURSE_NOT_FOUND);
         }
@@ -89,7 +104,7 @@ const orderListing = (query) => __awaiter(void 0, void 0, void 0, function* () {
             isPayment: true
         };
         const [orderListing, orderCount] = yield Promise.all([
-            models_1.Order.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)).populate([{ path: "Course", select: "CourseName" }, { path: "user", select: "email firstName lastName" }]),
+            models_1.Order.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)).populate([{ path: "Course", select: "title" }, { path: "user", select: "email mobileNumber fullName" }]),
             models_1.Order.countDocuments(filter),
         ]);
         return { orderListing, orderCount };

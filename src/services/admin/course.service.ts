@@ -89,9 +89,9 @@ const courseDetails = async (query: Dictionary) => {
 
 
 const deleteCourse = async (query: Dictionary) => {
-    const { CourseId } = query
+    const { courseId } = query
     try {
-        const deletedCourse = await Course.findByIdAndUpdate(CourseId, { isDeleted: true }, { new: true, lean: true })
+        const deletedCourse = await Course.findByIdAndUpdate(courseId, { isDeleted: true }, { new: true, lean: true })
         if (!deletedCourse) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,
@@ -119,7 +119,7 @@ const orderListing = async (query: Dictionary) => {
             isPayment: true
         };
         const [orderListing, orderCount] = await Promise.all([
-            Order.find(filter, {}, paginationOptions(page, limit)).populate([{ path: "Course", select: "CourseName" }, { path: "user", select: "email firstName lastName" }]),
+            Order.find(filter, {}, paginationOptions(page, limit)).populate([{ path: "Course", select: "title" }, { path: "user", select: "email mobileNumber fullName" }]),
             Order.countDocuments(filter),
         ]);
 

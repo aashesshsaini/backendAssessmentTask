@@ -9,6 +9,7 @@ const auth_routes_2 = __importDefault(require("./user/auth.routes"));
 const userManage_routes_1 = __importDefault(require("./admin/userManage.routes"));
 const course_routes_1 = __importDefault(require("./admin/course.routes"));
 const course_routes_2 = __importDefault(require("./user/course.routes"));
+const static_routes_1 = __importDefault(require("./static.routes"));
 const router = express_1.default.Router();
 const defaultRoutes = [
     {
@@ -30,6 +31,10 @@ const defaultRoutes = [
     {
         path: "/user/product",
         route: course_routes_2.default,
+    },
+    {
+        path: "/static",
+        route: static_routes_1.default,
     },
 ];
 defaultRoutes.forEach((route) => {

@@ -15,5 +15,6 @@ router.route('/')
     .get((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.getCourse), course_controller_1.default.getCourse)
     .put((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.updateCourse), course_controller_1.default.updateCourse)
     .delete((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.deleteCourse), course_controller_1.default.deleteCourse);
+router.get('/courseDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.courseDetails), course_controller_1.default.courseDetails);
 router.get('/orderListing', (0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.orderListing), course_controller_1.default.orderListing);
 exports.default = router;

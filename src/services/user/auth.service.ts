@@ -46,14 +46,14 @@ const createProfile = async (body: Dictionary, userId: ObjectId) => {
   const { fullName, email, age, gender } = body
   try {
     const updatedUserData = await User.findByIdAndUpdate(userId, { fullName, email, age, gender, isCreatedProfileUser: true }, { new: true }) as UserDocument
-    const stripeCustomer = await stripeInstance.customers.create({
-      name: fullName,
-      email,
-      phone: `${updatedUserData?.countryCode}${updatedUserData?.mobileNumber}`,
-    });
+    // const stripeCustomer = await stripeInstance.customers.create({
+    //   name: fullName,
+    //   email,
+    //   phone: `${updatedUserData?.countryCode}${updatedUserData?.mobileNumber}`,
+    // });
 
-    updatedUserData.stripeCustomerId = stripeCustomer.id;
-    await updatedUserData?.save();
+    // updatedUserData.stripeCustomerId = stripeCustomer.id;
+    // await updatedUserData?.save();
     return updatedUserData;
   } catch (error: any) {
     console.log(error)

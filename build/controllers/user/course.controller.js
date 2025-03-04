@@ -17,34 +17,22 @@ const getCourses = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(
     const courses = yield services_1.userCourseService.getCourses(req.query);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, courses);
 }));
-// const addRemoveToCart = catchAsync(async (req: Request, res: Response) => {
-//     const orderData = await userCourseService.addRemoveToCart(req.body, req.token?.user?._id);
-//     return successResponse(
-//         req,
-//         res,
-//         STATUS_CODES.SUCCESS,
-//         SUCCESS_MESSAGES.SUCCESS,
-//         orderData
-//     );
-// });
-// const createOrder = catchAsync(async (req: Request, res: Response) => {
-//     const orderData = await userCourseService.createOrder(req.body, req.token?.user?._id);
-//     return successResponse(
-//         req,
-//         res,
-//         STATUS_CODES.SUCCESS,
-//         SUCCESS_MESSAGES.SUCCESS,
-//         orderData
-//     );
-// });
-// const webhook = catchAsync(async (req: Request, res: Response) => {
-//     const orderData = await userCourseService.webhook(req.body);
-//     return successResponse(
-//         req,
-//         res,
-//         STATUS_CODES.SUCCESS,
-//         SUCCESS_MESSAGES.SUCCESS,
-//         orderData
-//     );
-// });
-exports.default = { getCourses };
+const courseDetails = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const courseData = yield services_1.userCourseService.courseDetails(req.query);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, courseData);
+}));
+const createOrder = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const orderData = yield services_1.userCourseService.createOrder(req.body, (_b = (_a = req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, orderData);
+}));
+const webhook = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const orderData = yield services_1.userCourseService.webhook(req.body);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, orderData);
+}));
+const myCourses = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const myCourseListing = yield services_1.userCourseService.myCourses(req.query, (_b = (_a = req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, myCourseListing);
+}));
+exports.default = { getCourses, courseDetails, createOrder, webhook, myCourses };
