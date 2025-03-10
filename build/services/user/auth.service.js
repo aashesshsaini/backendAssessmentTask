@@ -136,18 +136,19 @@ const userInfo = (user, query) => __awaiter(void 0, void 0, void 0, function* ()
     return user;
 });
 exports.userInfo = userInfo;
-const pushNotificationStatus = (user) => __awaiter(void 0, void 0, void 0, function* () {
+const pushNotificationStatus = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (user.isPushNotification) {
-            user.isPushNotification = false;
+        const user = yield models_1.User.findById(userId);
+        if (!user) {
+            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.NOT_FOUND, appConstant_1.ERROR_MESSAGES.USER_NOT_FOUND);
         }
-        else if (!user.isPushNotification) {
-            user.isPushNotification = true;
-        }
+        user.isPushNotification = !user.isPushNotification;
+        yield user.save();
+        console.log("After toggle:", user.isPushNotification);
         return user;
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         throw error;
     }
 });

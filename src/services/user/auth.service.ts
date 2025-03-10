@@ -165,19 +165,31 @@ const userInfo = async (user: Dictionary, query: Dictionary) => {
   return user
 };
 
-const pushNotificationStatus = async (user: UserDocument) => {
+const pushNotificationStatus = async (userId: string) => {
   try {
-    if (user.isPushNotification) {
-      user.isPushNotification = false
-    } else if (!user.isPushNotification) {
-      user.isPushNotification = true
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new OperationalError(
+        STATUS_CODES.NOT_FOUND,
+        ERROR_MESSAGES.USER_NOT_FOUND
+      );
     }
-    return user
+
+    user.isPushNotification = !user.isPushNotification;
+
+    await user.save();
+
+    console.log("After toggle:", user.isPushNotification);
+
+    return user;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.error(error);
+    throw error;
   }
-}
+};
+
+
 
 export {
   login,

@@ -66,8 +66,8 @@ const userInfo = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(vo
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatedUserInfo);
 }));
 const pushNotificationStatus = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userInfo = yield services_1.userAuthService.pushNotificationStatus((_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user);
+    var _a, _b;
+    const userInfo = yield services_1.userAuthService.pushNotificationStatus((_b = (_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id);
     const formatedUserInfo = (0, formatResponse_1.formatUser)(userInfo);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatedUserInfo);
 }));

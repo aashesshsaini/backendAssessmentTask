@@ -1,13 +1,13 @@
 import { Dictionary } from "../types";
 
 const formatUser = (user: Dictionary) => {
-  console.log(user, "user in format object")
+  // console.log(user, "user in format object")
   // const userCopy = { ...user._doc } ? { ...user._doc } : user
   const userCopy = Object.keys(user._doc || {}).length ? { ...user._doc } : user;
-  console.log(userCopy, "userCopy")
+  // console.log(userCopy, "userCopy")
   delete (userCopy as any).__v;
   delete (userCopy as any).password;
-  console.log(userCopy, "userCopy.........")
+  // console.log(userCopy, "userCopy.........")
   return userCopy;
 };
 

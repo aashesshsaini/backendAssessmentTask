@@ -136,7 +136,7 @@ const userInfo = catchAsync(async (req: Request, res: Response) => {
 });
 
 const pushNotificationStatus = catchAsync(async (req: Request, res: Response) => {
-  const userInfo = await userAuthService.pushNotificationStatus(req?.token?.user);
+  const userInfo = await userAuthService.pushNotificationStatus(req?.token?.user?._id);
   const formatedUserInfo = formatUser(userInfo)
   return successResponse(
     req,
