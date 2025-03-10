@@ -22,7 +22,7 @@ const defaultRoutes = [
     route: userManage,
   },
   {
-    path: "/admin/product",
+    path: "/admin/course",
     route: adminProductManage,
   },
   {
