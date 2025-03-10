@@ -29,7 +29,7 @@ const defaultRoutes = [
         route: course_routes_1.default,
     },
     {
-        path: "/user/product",
+        path: "/user/course",
         route: course_routes_2.default,
     },
     {

@@ -13,7 +13,7 @@ const router = express_1.default.Router();
 router.post("/login", (0, validate_1.validate)(auth_validation_1.default.login), auth_controller_1.default.login);
 router.post("/verifyOtp", (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.verifyOtp), auth_controller_1.default.verifyOtp);
 router.post("/resendOtp", (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.resendOtp), auth_controller_1.default.resendOtp);
-router.post('/createProfile', (0, validate_1.validate)(auth_validation_1.default.createProfile), auth_controller_1.default.createProfile);
+router.post('/createProfile', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.createProfile), auth_controller_1.default.createProfile);
 router.delete("/deleteAccount", (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.deleteAccount), auth_controller_1.default.deleteAccount);
 router.put("/logout", (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.logout), auth_controller_1.default.logout);
 router.put("/editProfile", (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(auth_validation_1.default.editProfile), auth_controller_1.default.editProfile);

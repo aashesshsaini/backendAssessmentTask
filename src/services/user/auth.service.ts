@@ -88,21 +88,22 @@ const createProfile = async (body: Dictionary, userId: ObjectId) => {
 }
 
 const deleteAccount = async (user: Dictionary, query: Dictionary) => {
-  const { password } = query;
+  // const { password } = query;
   try {
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(passwordMatch);
-    if (!passwordMatch) {
-      throw new OperationalError(
-        STATUS_CODES.ACTION_FAILED,
-        ERROR_MESSAGES.WRONG_PASSWORD
-      );
-    }
+    // console.log({user, password})
+    // const passwordMatch = await bcrypt.compare(password, user.password);
+    // console.log(passwordMatch);
+    // if (!passwordMatch) {
+    //   throw new OperationalError(
+    //     STATUS_CODES.ACTION_FAILED,
+    //     ERROR_MESSAGES.WRONG_PASSWORD
+    //   );
+    // }
 
     const [deletedUser, deletedToken] = await Promise.all([
       User.findByIdAndUpdate(
         user._id,
-        { isDeleted: true, isVerified: false },
+        { isDeleted: true, isCreatedProfileUser: false },
         { lean: true, new: true }
       ),
       Token.updateMany(
@@ -125,7 +126,7 @@ const deleteAccount = async (user: Dictionary, query: Dictionary) => {
 };
 
 const logout = async (userId: ObjectId) => {
-  await Token.updateMany({ user: userId }, { isDeleted: false });
+  await Token.updateMany({ user: userId }, { isDeleted: true });
 };
 
 const editProfile = async (userId: ObjectId, body: UserDocument) => {

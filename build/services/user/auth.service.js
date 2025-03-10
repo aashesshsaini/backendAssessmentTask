@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pushNotificationStatus = exports.userInfo = exports.editProfile = exports.logout = exports.deleteAccount = exports.createProfile = exports.resendOtp = exports.verifyOtp = exports.login = void 0;
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
@@ -84,15 +83,19 @@ const createProfile = (body, userId) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.createProfile = createProfile;
 const deleteAccount = (user, query) => __awaiter(void 0, void 0, void 0, function* () {
-    const { password } = query;
+    // const { password } = query;
     try {
-        const passwordMatch = yield bcryptjs_1.default.compare(password, user.password);
-        console.log(passwordMatch);
-        if (!passwordMatch) {
-            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.WRONG_PASSWORD);
-        }
+        // console.log({user, password})
+        // const passwordMatch = await bcrypt.compare(password, user.password);
+        // console.log(passwordMatch);
+        // if (!passwordMatch) {
+        //   throw new OperationalError(
+        //     STATUS_CODES.ACTION_FAILED,
+        //     ERROR_MESSAGES.WRONG_PASSWORD
+        //   );
+        // }
         const [deletedUser, deletedToken] = yield Promise.all([
-            models_1.User.findByIdAndUpdate(user._id, { isDeleted: true, isVerified: false }, { lean: true, new: true }),
+            models_1.User.findByIdAndUpdate(user._id, { isDeleted: true, isCreatedProfileUser: false }, { lean: true, new: true }),
             models_1.Token.updateMany({ user: user._id }, { isDeleted: false }, { lean: true, new: true }),
         ]);
         if (!deletedUser) {
@@ -106,7 +109,7 @@ const deleteAccount = (user, query) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.deleteAccount = deleteAccount;
 const logout = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    yield models_1.Token.updateMany({ user: userId }, { isDeleted: false });
+    yield models_1.Token.updateMany({ user: userId }, { isDeleted: true });
 });
 exports.logout = logout;
 const editProfile = (userId, body) => __awaiter(void 0, void 0, void 0, function* () {

@@ -25,13 +25,9 @@ const jwtVerify = async (payload: JwtPayload, done: VerifiedCallback) => {
       token = await Token.findOne({ _id: payload.id, isDeleted: false })
         .populate({ path: 'admin' })
         .lean();
-    } else if (payload.role === USER_TYPE.USER) {
+    }{
       token = await Token.findOne({ _id: payload.id, isDeleted: false })
         .populate({ path: 'user' })
-        .lean();
-    } else {
-      token = await Token.findOne({ _id: payload.id, isDeleted: false })
-        .populate({ path: 'serviecProvider' })
         .lean();
     }
 

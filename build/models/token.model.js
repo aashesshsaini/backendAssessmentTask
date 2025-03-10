@@ -28,7 +28,6 @@ const appConstant_1 = require("../config/appConstant");
 const tokenSchema = new mongoose_1.Schema({
     token: { type: String, unique: true, required: true },
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'users' },
-    serviceProvider: { type: mongoose_1.Schema.Types.ObjectId, ref: 'seviceProviders' },
     admin: { type: mongoose_1.Schema.Types.ObjectId, ref: 'admins' },
     role: { type: String, enum: [...Object.values(appConstant_1.USER_TYPE)], required: true },
     type: {

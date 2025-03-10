@@ -70,6 +70,7 @@ const resendOtp = catchAsync(async (req: Request, res: Response) => {
 });
 
 const createProfile = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.token)
   const userData = await userAuthService.createProfile(req.body, req.token.user._id) as UserDocument;
 
   const formatUserData = formatSignUpUser(userData);

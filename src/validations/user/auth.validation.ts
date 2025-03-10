@@ -35,7 +35,7 @@ const createProfile = {
 
 const deleteAccount = {
   query: Joi.object().keys({
-    password: JOI.PASSWORD,
+    // password: JOI.PASSWORD,
   }),
 };
 

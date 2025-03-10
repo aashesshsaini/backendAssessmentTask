@@ -33,14 +33,9 @@ const jwtVerify = (payload, done) => __awaiter(void 0, void 0, void 0, function*
                 .populate({ path: 'admin' })
                 .lean();
         }
-        else if (payload.role === appConstant_1.USER_TYPE.USER) {
+        {
             token = yield models_1.Token.findOne({ _id: payload.id, isDeleted: false })
                 .populate({ path: 'user' })
-                .lean();
-        }
-        else {
-            token = yield models_1.Token.findOne({ _id: payload.id, isDeleted: false })
-                .populate({ path: 'serviecProvider' })
                 .lean();
         }
         if (!token) {

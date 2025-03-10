@@ -24,7 +24,7 @@ router.post(
   userAuthController.resendOtp
 );
 
-router.post('/createProfile', validate(validation.createProfile), userAuthController.createProfile)
+router.post('/createProfile', auth(USER_TYPE.USER), validate(validation.createProfile), userAuthController.createProfile)
 
 router.delete(
   "/deleteAccount",
