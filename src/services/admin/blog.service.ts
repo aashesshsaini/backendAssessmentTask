@@ -84,8 +84,8 @@ const getBlog = async (query: Dictionary) => {
 
 const updateBlog = async (body: Dictionary) => {
     try {
-        const { blogId, ttile, mainImage, introduction, sections } = body
-        const updatedBlogData = await Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { ttile, mainImage, introduction, sections}, { lean: true, new: true })
+        const { blogId, title, mainImage, introduction, sections } = body
+        const updatedBlogData = await Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage, introduction, sections}, { lean: true, new: true })
         if (!updatedBlogData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,

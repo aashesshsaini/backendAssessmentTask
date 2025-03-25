@@ -77,8 +77,8 @@ const getBlog = (query) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getBlog = getBlog;
 const updateBlog = (body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { blogId, ttile, mainImage, introduction, sections } = body;
-        const updatedBlogData = yield models_1.Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { ttile, mainImage, introduction, sections }, { lean: true, new: true });
+        const { blogId, title, mainImage, introduction, sections } = body;
+        const updatedBlogData = yield models_1.Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage, introduction, sections }, { lean: true, new: true });
         if (!updatedBlogData) {
             throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.BLOG_NOT_FOUND);
         }

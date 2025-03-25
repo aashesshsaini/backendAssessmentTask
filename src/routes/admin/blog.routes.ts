@@ -13,7 +13,7 @@ router.route('/')
     .put(auth(USER_TYPE.ADMIN), validate(validation.updateBlog), controller.updateBlog)
     .delete(auth(USER_TYPE.ADMIN), validate(validation.deleteBlog), controller.deleteBlog);
 
-    router.get('/blogDetails', auth(USER_TYPE.USER), validate(validation.blogDetails), controller.blogDetails)
+    router.get('/blogDetails', auth(USER_TYPE.ADMIN), validate(validation.blogDetails), controller.blogDetails)
 
 
 export default router

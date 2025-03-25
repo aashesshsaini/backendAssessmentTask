@@ -15,5 +15,5 @@ router.route('/')
     .get((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.getBlog), blog_controller_1.default.getBlog)
     .put((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.updateBlog), blog_controller_1.default.updateBlog)
     .delete((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.deleteBlog), blog_controller_1.default.deleteBlog);
-router.get('/blogDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(blog_validation_1.default.blogDetails), blog_controller_1.default.blogDetails);
+router.get('/blogDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.blogDetails), blog_controller_1.default.blogDetails);
 exports.default = router;
