@@ -1,9 +1,9 @@
-import { Order, Course, Token, User } from "../../models";
+import { Order, Course, Token, User, Blog } from "../../models";
 import { STATUS_CODES, ERROR_MESSAGES, CART_ACTION_CASE } from "../../config/appConstant";
 import { OperationalError } from "../../utils/error";
 import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
-import redisClient from '../../utils/redis';
+// import redisClient from '../../utils/redis';
 import Stripe from "stripe"
 import config from "../../config/config";
 import { orderPlacedEmail } from "../../libs/sendMails";
@@ -14,11 +14,11 @@ const getCourses = async (query: Dictionary) => {
     const { page = 0, limit = 10, search } = query
     const cacheKey = `Courses:page=${page}:limit=${limit}:search=${search || 'all'}`;
     try {
-        const cachedData = await redisClient.get(cacheKey);
-        if (cachedData) {
-            console.log("Fetching from Redis Cache...");
-            return JSON.parse(cachedData);
-        }
+        // const cachedData = await redisClient.get(cacheKey);
+        // if (cachedData) {
+        //     console.log("Fetching from Redis Cache...");
+        //     return JSON.parse(cachedData);
+        // }
         var filter: {
             isDeleted: boolean;
             $or?: Array<
@@ -45,7 +45,7 @@ const getCourses = async (query: Dictionary) => {
         ]);
 
         const result = { CourseListing, CourseCount };
-        const redisData = await redisClient.setEx(cacheKey, 36, JSON.stringify(result));
+        // const redisData = await redisClient.setEx(cacheKey, 36, JSON.stringify(result));
         return result;
     } catch (error: any) {
         console.log(error, "error...........")
@@ -167,4 +167,57 @@ const myCourses = async (query: Dictionary, userId: ObjectId) => {
     }
 }
 
-export { getCourses, courseDetails, createOrder, webhook, myCourses }
+const getBlogs = async (query: Dictionary) => {
+    const { page = 0, limit = 10, search } = query
+    try {
+        var filter: {
+            isDeleted: boolean;
+            $or?: Array<
+                | { title?: { $regex: RegExp } }
+                | { introduction?: { $regex: RegExp } }
+
+            >;
+        } = {
+            isDeleted: false,
+        };
+
+        if (search) {
+            filter = {
+                ...filter,
+                $or: [
+                    { title: { $regex: RegExp(search, "i") } },
+                    { introduction: { $regex: RegExp(search, "i") } },
+                ],
+            };
+        }
+        const [blogListing, blogCount] = await Promise.all([
+            Blog.find(filter, { }, paginationOptions(page, limit)),
+            Blog.countDocuments(filter),
+        ]);
+
+        return { blogListing, blogCount };
+    } catch (error: any) {
+        console.log(error, "error...........")
+        throw error
+    }
+}
+
+const blogDetails = async (query: Dictionary) => {
+    const { blogId } = query
+    try {
+        const blogData = await Blog.findOne({ _id: blogId, isDeleted: false }).lean()
+        if (!blogData) {
+            throw new OperationalError(
+                STATUS_CODES.ACTION_FAILED,
+                ERROR_MESSAGES.BLOG_NOT_FOUND
+            )
+        }
+        return blogData
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+
+export { getCourses, courseDetails, createOrder, webhook, myCourses, getBlogs, blogDetails }

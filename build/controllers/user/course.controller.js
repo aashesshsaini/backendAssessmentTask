@@ -35,4 +35,12 @@ const myCourses = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(v
     const myCourseListing = yield services_1.userCourseService.myCourses(req.query, (_b = (_a = req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, myCourseListing);
 }));
-exports.default = { getCourses, courseDetails, createOrder, webhook, myCourses };
+const getBlogs = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const blogListing = yield services_1.userCourseService.getBlogs(req.query);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, blogListing);
+}));
+const blogDetails = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const blogData = yield services_1.userCourseService.blogDetails(req.query);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, blogData);
+}));
+exports.default = { getCourses, courseDetails, createOrder, webhook, myCourses, getBlogs, blogDetails };

@@ -67,7 +67,8 @@ const ERROR_MESSAGES = {
     ACCOUNT_BLOCKED: "Your account has been blocked by Admin",
     USER_NOT_FOUND: "User not found",
     FIELD_REQUIRED: "All the fields are required",
-    COURSE_NOT_FOUND: "Course not  found"
+    COURSE_NOT_FOUND: "Course not  found",
+    BLOG_NOT_FOUND: "Blog not  found"
 };
 exports.ERROR_MESSAGES = ERROR_MESSAGES;
 const STATUS_CODES = {

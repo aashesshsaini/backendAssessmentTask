@@ -23,10 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userCourseService = exports.adminCourseService = exports.userManageService = exports.adminAuthService = exports.userAuthService = exports.tokenService = void 0;
+exports.userCourseService = exports.adminBlogService = exports.adminCourseService = exports.userManageService = exports.adminAuthService = exports.userAuthService = exports.tokenService = void 0;
 exports.tokenService = __importStar(require("./token.service"));
 exports.userAuthService = __importStar(require("./user/auth.service"));
 exports.adminAuthService = __importStar(require("./admin/auth.service"));
 exports.userManageService = __importStar(require("./admin/userManage.service"));
 exports.adminCourseService = __importStar(require("./admin/course.service"));
+exports.adminBlogService = __importStar(require("./admin/blog.service"));
 exports.userCourseService = __importStar(require("./user/course.service"));

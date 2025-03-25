@@ -14,6 +14,13 @@ const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
 const universalFunctions_1 = require("../../utils/universalFunctions");
+// const s3 = new AWS.S3({
+//     accessKeyId: config.S3Credentials.accessKeyId,
+//     secretAccessKey: config.S3Credentials.secretAccessKey,
+//     region:config.S3Credentials.region,
+//     // Bucket: config.S3Credentials.accessKeyId,
+//     // BucketUrl: config.S3Credentials.accessKeyId,
+//   });
 const createCourse = (body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(body, "body.........");
@@ -27,6 +34,23 @@ const createCourse = (body) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.createCourse = createCourse;
+// const createCourse = async (body: Dictionary) => {
+//     // try {
+//     //     const params = {
+//     //         Bucket: process.env.S3_BUCKET_NAME,
+//     //         Key: null,
+//     //         Body: file.buffer,
+//     //         ContentType: file.mimetype,
+//     //       };
+//     //     console.log(body, "body.........")
+//     //     const CourseData = await Course.create(body)
+//     //     console.log(CourseData)
+//     //     return CourseData
+//     // } catch (error: any) {
+//     //     console.log(error, "error...........")
+//     //     throw error
+//     // }
+// }
 const getCourse = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const { page = 0, limit = 10, search } = query;
     try {

@@ -3,6 +3,16 @@ import { STATUS_CODES, ERROR_MESSAGES } from "../../config/appConstant";
 import { OperationalError } from "../../utils/error";
 import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
+import AWS from "aws-sdk";
+import config from "../../config/config"
+
+// const s3 = new AWS.S3({
+//     accessKeyId: config.S3Credentials.accessKeyId,
+//     secretAccessKey: config.S3Credentials.secretAccessKey,
+//     region:config.S3Credentials.region,
+//     // Bucket: config.S3Credentials.accessKeyId,
+//     // BucketUrl: config.S3Credentials.accessKeyId,
+//   });
 
 const createCourse = async (body: Dictionary) => {
     try {
@@ -15,6 +25,25 @@ const createCourse = async (body: Dictionary) => {
         throw error
     }
 }
+
+// const createCourse = async (body: Dictionary) => {
+//     // try {
+//     //     const params = {
+      
+//     //         Bucket: process.env.S3_BUCKET_NAME,
+//     //         Key: null,
+//     //         Body: file.buffer,
+//     //         ContentType: file.mimetype,
+//     //       };
+//     //     console.log(body, "body.........")
+//     //     const CourseData = await Course.create(body)
+//     //     console.log(CourseData)
+//     //     return CourseData
+//     // } catch (error: any) {
+//     //     console.log(error, "error...........")
+//     //     throw error
+//     // }
+// }
 
 const getCourse = async (query: Dictionary) => {
     const { page = 0, limit = 10, search } = query

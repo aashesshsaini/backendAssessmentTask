@@ -8,6 +8,7 @@ const auth_routes_1 = __importDefault(require("./admin/auth.routes"));
 const auth_routes_2 = __importDefault(require("./user/auth.routes"));
 const userManage_routes_1 = __importDefault(require("./admin/userManage.routes"));
 const course_routes_1 = __importDefault(require("./admin/course.routes"));
+const blog_routes_1 = __importDefault(require("./admin/blog.routes"));
 const course_routes_2 = __importDefault(require("./user/course.routes"));
 const static_routes_1 = __importDefault(require("./static.routes"));
 const router = express_1.default.Router();
@@ -27,6 +28,10 @@ const defaultRoutes = [
     {
         path: "/admin/course",
         route: course_routes_1.default,
+    },
+    {
+        path: "/admin/blog",
+        route: blog_routes_1.default
     },
     {
         path: "/user/course",

@@ -4,6 +4,7 @@ import { duration } from 'moment';
 import { query } from 'express';
 
 const createCourse = {
+
     body: Joi.object().keys({
         title: Joi.string().required(),
         description: Joi.string().required(),
@@ -13,6 +14,22 @@ const createCourse = {
         priceWithOffer: Joi.number().required()
     })
 }
+
+// const createCourse = {
+//     body: Joi.object().keys({
+//         title: Joi.string().required(),
+//         description: Joi.string().required(),
+//         duration: Joi.string().required(),
+//         price: Joi.number().required(),
+//         priceWithOffer: Joi.number().required()
+//     }),
+//     file: Joi.object({
+//         fieldname: Joi.string().valid("video").required(),
+//         originalname: Joi.string().required(),
+//         mimetype: Joi.string().valid("video/mp4", "video/avi", "video/mov", "video/mkv").required(),
+//         size: Joi.number().max(100 * 1024 * 1024).required() // Limit: 100MB
+//     }).required()
+// };
 
 const getCourse = {
     query: Joi.object().keys({

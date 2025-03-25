@@ -63,5 +63,27 @@ const myCourses = catchAsync(async (req: Request, res: Response) => {
     );
 });
 
+const getBlogs = catchAsync(async (req: Request, res: Response) => {
+    const blogListing = await userCourseService.getBlogs(req.query);
+    return successResponse(
+        req,
+        res,
+        STATUS_CODES.SUCCESS,
+        SUCCESS_MESSAGES.SUCCESS,
+        blogListing
+    );
+});
 
-export default { getCourses, courseDetails, createOrder, webhook, myCourses }
+const blogDetails = catchAsync(async (req: Request, res: Response) => {
+    const blogData = await userCourseService.blogDetails(req.query);
+    return successResponse(
+        req,
+        res,
+        STATUS_CODES.SUCCESS,
+        SUCCESS_MESSAGES.SUCCESS,
+        blogData
+    );
+});
+
+
+export default { getCourses, courseDetails, createOrder, webhook, myCourses, getBlogs, blogDetails }

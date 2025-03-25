@@ -28,4 +28,16 @@ const myCourses = {
         limit: appConstant_1.JOI.LIMIT
     })
 };
-exports.default = { getCourses, courseDetails, createOrder, myCourses };
+const getBlogs = {
+    query: joi_1.default.object().keys({
+        page: appConstant_1.JOI.PAGE,
+        limit: appConstant_1.JOI.LIMIT,
+        search: joi_1.default.string().allow('')
+    })
+};
+const blogDetails = {
+    query: joi_1.default.object().keys({
+        blogId: appConstant_1.JOI.OBJECTID
+    })
+};
+exports.default = { getCourses, courseDetails, createOrder, myCourses, getBlogs, blogDetails };

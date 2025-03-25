@@ -28,4 +28,18 @@ const myCourses = {
     })
 }
 
-export default { getCourses, courseDetails, createOrder, myCourses }
+const getBlogs = {
+    query: Joi.object().keys({
+        page: JOI.PAGE,
+        limit: JOI.LIMIT,
+        search: Joi.string().allow('')
+    })
+}
+
+const blogDetails = {
+    query: Joi.object().keys({
+        blogId: JOI.OBJECTID
+    })
+}
+
+export default { getCourses, courseDetails, createOrder, myCourses, getBlogs, blogDetails }

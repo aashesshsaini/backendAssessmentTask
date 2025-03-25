@@ -32,7 +32,12 @@ const envVarsSchema = joi_1.default.object({
     TWILLIO_ACCOUNT_SID: joi_1.default.string().description("account sid for twillio"),
     TWILLIO_AUTH_TOKEN: joi_1.default.string().description('secret key for twillio'),
     PHONE_NUMBER: joi_1.default.string().description("phon enumber for twilio"),
-    ENVIRONMENT: joi_1.default.string().valid("development", "production").required()
+    ENVIRONMENT: joi_1.default.string().valid("development", "production").required(),
+    BUCKET_ACCESS_KEY_ID: joi_1.default.string().description("AWS S3 key id").required(),
+    BUCKET_SECRET_ACCESS_KEY: joi_1.default.string().description("AWS S3 secret access key").required(),
+    BUCKET_REGION: joi_1.default.string().description("AWS S3 region").required(),
+    BUCKET_NAME: joi_1.default.string().description("AWS S3 bucket name").required(),
+    BUCKET_URL: joi_1.default.string().description("AWS S3 bucket url").required(),
 }).unknown();
 const { value: envVars, error } = envVarsSchema
     .prefs({ errors: { label: 'key' } })
@@ -62,6 +67,7 @@ const config = {
     smtp: { email: envVars.EMAIL, password: envVars.PASSWORD },
     twilio: { accountSID: envVars.TWILLIO_ACCOUNT_SID, accountSecret: envVars.TWILLIO_AUTH_TOKEN, phoneNumber: envVars.PHONE_NUMBER },
     stripeSecretKey: envVars.STRIPE_SECRET_KEY,
-    env: envVars.ENVIRONMENT
+    env: envVars.ENVIRONMENT,
+    S3Credentials: { accessKeyId: envVars.BUCKET_ACCESS_KEY_ID, secretAccessKey: envVars.BUCKET_SECRET_ACCESS_KEY, region: envVars.BUCKET_REGION, bucket: envVars.BUCKET_NAME, bucketUrl: envVars.BUCKET_URL }
 };
 exports.default = config;

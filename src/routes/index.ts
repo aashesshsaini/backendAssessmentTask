@@ -3,6 +3,7 @@ import adminAuth from "./admin/auth.routes"
 import userAuth from "./user/auth.routes"
 import userManage from "./admin/userManage.routes"
 import adminProductManage from "./admin/course.routes"
+import adminBlogManage from './admin/blog.routes'
 import userProduct from "./user/course.routes"
 import userStatic from "./static.routes"
 
@@ -24,6 +25,10 @@ const defaultRoutes = [
   {
     path: "/admin/course",
     route: adminProductManage,
+  },
+  {
+    path: "/admin/blog",
+    route: adminBlogManage
   },
   {
     path: "/user/course",

@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.myCourses = exports.webhook = exports.createOrder = exports.courseDetails = exports.getCourses = void 0;
+exports.blogDetails = exports.getBlogs = exports.myCourses = exports.webhook = exports.createOrder = exports.courseDetails = exports.getCourses = void 0;
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
 const universalFunctions_1 = require("../../utils/universalFunctions");
-const redis_1 = __importDefault(require("../../utils/redis"));
+// import redisClient from '../../utils/redis';
 const stripe_1 = __importDefault(require("stripe"));
 const config_1 = __importDefault(require("../../config/config"));
 const sendMails_1 = require("../../libs/sendMails");
@@ -26,11 +26,11 @@ const getCourses = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const { page = 0, limit = 10, search } = query;
     const cacheKey = `Courses:page=${page}:limit=${limit}:search=${search || 'all'}`;
     try {
-        const cachedData = yield redis_1.default.get(cacheKey);
-        if (cachedData) {
-            console.log("Fetching from Redis Cache...");
-            return JSON.parse(cachedData);
-        }
+        // const cachedData = await redisClient.get(cacheKey);
+        // if (cachedData) {
+        //     console.log("Fetching from Redis Cache...");
+        //     return JSON.parse(cachedData);
+        // }
         var filter = {
             isDeleted: false,
         };
@@ -45,7 +45,7 @@ const getCourses = (query) => __awaiter(void 0, void 0, void 0, function* () {
             models_1.Course.countDocuments(filter),
         ]);
         const result = { CourseListing, CourseCount };
-        const redisData = yield redis_1.default.setEx(cacheKey, 36, JSON.stringify(result));
+        // const redisData = await redisClient.setEx(cacheKey, 36, JSON.stringify(result));
         return result;
     }
     catch (error) {
@@ -157,3 +157,42 @@ const myCourses = (query, userId) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.myCourses = myCourses;
+const getBlogs = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page = 0, limit = 10, search } = query;
+    try {
+        var filter = {
+            isDeleted: false,
+        };
+        if (search) {
+            filter = Object.assign(Object.assign({}, filter), { $or: [
+                    { title: { $regex: RegExp(search, "i") } },
+                    { introduction: { $regex: RegExp(search, "i") } },
+                ] });
+        }
+        const [blogListing, blogCount] = yield Promise.all([
+            models_1.Blog.find(filter, {}, (0, universalFunctions_1.paginationOptions)(page, limit)),
+            models_1.Blog.countDocuments(filter),
+        ]);
+        return { blogListing, blogCount };
+    }
+    catch (error) {
+        console.log(error, "error...........");
+        throw error;
+    }
+});
+exports.getBlogs = getBlogs;
+const blogDetails = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { blogId } = query;
+    try {
+        const blogData = yield models_1.Blog.findOne({ _id: blogId, isDeleted: false }).lean();
+        if (!blogData) {
+            throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.BLOG_NOT_FOUND);
+        }
+        return blogData;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+});
+exports.blogDetails = blogDetails;
