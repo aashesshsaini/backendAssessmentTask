@@ -32,19 +32,20 @@ export const createBlog = {
             })
              )
     }),
-    files: Joi.object().keys({
-        file:Joi.array().items({
-            fieldname: Joi.string()
-            .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
-            .required(),
-          originalname: Joi.string().required(),
-          mimetype: Joi.string()
-            .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
-            .required(),
-          size: Joi.number().max(10 * 1024 * 1024).required(), // 10 MB max
-          buffer: Joi.any().required(),
-        })
-}),
+    // files: Joi.object().pattern(
+    //     Joi.string(),
+    //     Joi.array().items(
+    //       Joi.object({
+    //         fieldname: Joi.string().required(),
+    //         originalname: Joi.string().required(),
+    //         mimetype: Joi.string()
+    //           .valid('image/jpeg', 'image/png', 'image/webp', 'image/jpg')
+    //           .required(),
+    //         size: Joi.number().max(10 * 1024 * 1024).required(),
+    //         buffer: Joi.any().required(),
+    //       })
+    //     )
+    //   )
   };
 
 
@@ -70,18 +71,29 @@ const updateBlog = {
                )
       }),
       files: Joi.object().keys({
-          file:Joi.array().items({
-              fieldname: Joi.string()
-              .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
-              ,
+        file: Joi.array().items(
+          Joi.object({
+            fieldname: Joi.string().pattern(/^mainImage$|^sections\[\d+\]\[image\]$/),
             originalname: Joi.string(),
-            mimetype: Joi.string()
-              .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
-              ,
-            size: Joi.number().max(10 * 1024 * 1024), // 10 MB max
+            mimetype: Joi.string().valid("image/jpeg", "image/png", "image/webp", "image/jpg"),
+            size: Joi.number().max(10 * 1024 * 1024),
             buffer: Joi.any(),
           })
-  }),
+        ),
+      }),      
+//       files: Joi.object().keys({
+//           file:Joi.array().items({
+//               fieldname: Joi.string()
+//               .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
+//               ,
+//             originalname: Joi.string(),
+//             mimetype: Joi.string()
+//               .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
+//               ,
+//             size: Joi.number().max(10 * 1024 * 1024), // 10 MB max
+//             buffer: Joi.any(),
+//           })
+//   }),
 }
 
 

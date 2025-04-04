@@ -40,7 +40,7 @@ const getCourses = async (query: Dictionary) => {
             };
         }
         const [CourseListing, CourseCount] = await Promise.all([
-            Course.find(filter, { title: 1, video: 1, duration: 1, price: 1, priceWithOffer: 1 }, paginationOptions(page, limit)),
+            Course.find(filter, { title: 1, videos: 1, duration: 1, price: 1, priceWithOffer: 1 }, paginationOptions(page, limit)),
             Course.countDocuments(filter),
         ]);
 

@@ -33,19 +33,20 @@ exports.createBlog = {
             paragraph: joi_1.default.string(),
         }))
     }),
-    files: joi_1.default.object().keys({
-        file: joi_1.default.array().items({
-            fieldname: joi_1.default.string()
-                .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
-                .required(),
-            originalname: joi_1.default.string().required(),
-            mimetype: joi_1.default.string()
-                .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
-                .required(),
-            size: joi_1.default.number().max(10 * 1024 * 1024).required(), // 10 MB max
-            buffer: joi_1.default.any().required(),
-        })
-    }),
+    // files: Joi.object().pattern(
+    //     Joi.string(),
+    //     Joi.array().items(
+    //       Joi.object({
+    //         fieldname: Joi.string().required(),
+    //         originalname: Joi.string().required(),
+    //         mimetype: Joi.string()
+    //           .valid('image/jpeg', 'image/png', 'image/webp', 'image/jpg')
+    //           .required(),
+    //         size: Joi.number().max(10 * 1024 * 1024).required(),
+    //         buffer: Joi.any().required(),
+    //       })
+    //     )
+    //   )
 };
 const getBlog = {
     query: joi_1.default.object().keys({
@@ -66,16 +67,27 @@ const updateBlog = {
         }))
     }),
     files: joi_1.default.object().keys({
-        file: joi_1.default.array().items({
-            fieldname: joi_1.default.string()
-                .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/),
+        file: joi_1.default.array().items(joi_1.default.object({
+            fieldname: joi_1.default.string().pattern(/^mainImage$|^sections\[\d+\]\[image\]$/),
             originalname: joi_1.default.string(),
-            mimetype: joi_1.default.string()
-                .valid("image/jpeg", "image/png", "image/webp", "image/jpg"),
-            size: joi_1.default.number().max(10 * 1024 * 1024), // 10 MB max
+            mimetype: joi_1.default.string().valid("image/jpeg", "image/png", "image/webp", "image/jpg"),
+            size: joi_1.default.number().max(10 * 1024 * 1024),
             buffer: joi_1.default.any(),
-        })
+        })),
     }),
+    //       files: Joi.object().keys({
+    //           file:Joi.array().items({
+    //               fieldname: Joi.string()
+    //               .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
+    //               ,
+    //             originalname: Joi.string(),
+    //             mimetype: Joi.string()
+    //               .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
+    //               ,
+    //             size: Joi.number().max(10 * 1024 * 1024), // 10 MB max
+    //             buffer: Joi.any(),
+    //           })
+    //   }),
 };
 const deleteBlog = {
     query: joi_1.default.object().keys({

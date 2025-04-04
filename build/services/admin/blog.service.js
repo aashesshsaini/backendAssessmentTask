@@ -25,24 +25,64 @@ const s3Upload_1 = __importDefault(require("../../utils/s3Upload"));
 //     // Bucket: config.S3Credentials.accessKeyId,
 //     // BucketUrl: config.S3Credentials.accessKeyId,
 //   });
+// const createBlog = async (body: Dictionary, files:Dictionary) => {
+//     const {title, introduction, sections} = body
+//     try {
+//   let mainImageUrl = "";
+//   if (files["mainImage"] && files["mainImage"][0]) {
+//     mainImageUrl = await uploadToS3(files["mainImage"][0]);
+//   }
+//   console.log(files, 'files....................')
+//   const sectionResults = await Promise.all(
+//     sections.map(async (section: any, index: number) => {
+//       const imageFieldName = `sections[${index}][image]`;
+//       let imageUrl = "";
+//       if (files[imageFieldName] && files[imageFieldName][0]) {
+//         imageUrl = await uploadToS3(files[imageFieldName][0]);
+//       }
+//       return {
+//         ...section,
+//         image: imageUrl,
+//       };
+//     })
+//   );
+//         console.log(body, "body.........")
+//         const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
+//         console.log(blogData)
+//         return blogData
+//     } catch (error: any) {
+//         console.log(error, "error...........")
+//         throw error
+//     }
+// }
 const createBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, introduction, sections } = body;
+    // Convert file array to object grouped by fieldname
+    const groupedFiles = {};
+    files.forEach((file) => {
+        if (!groupedFiles[file.fieldname])
+            groupedFiles[file.fieldname] = [];
+        groupedFiles[file.fieldname].push(file);
+    });
     try {
         let mainImageUrl = "";
-        if (files["mainImage"] && files["mainImage"][0]) {
-            mainImageUrl = yield (0, s3Upload_1.default)(files["mainImage"][0]);
+        if (groupedFiles["mainImage"] && groupedFiles["mainImage"][0]) {
+            mainImageUrl = yield (0, s3Upload_1.default)(groupedFiles["mainImage"][0]);
         }
         const sectionResults = yield Promise.all(sections.map((section, index) => __awaiter(void 0, void 0, void 0, function* () {
             const imageFieldName = `sections[${index}][image]`;
             let imageUrl = "";
-            if (files[imageFieldName] && files[imageFieldName][0]) {
-                imageUrl = yield (0, s3Upload_1.default)(files[imageFieldName][0]);
+            if (groupedFiles[imageFieldName] && groupedFiles[imageFieldName][0]) {
+                imageUrl = yield (0, s3Upload_1.default)(groupedFiles[imageFieldName][0]);
             }
             return Object.assign(Object.assign({}, section), { image: imageUrl });
         })));
-        console.log(body, "body.........");
-        const blogData = yield models_1.Blog.create({ title, introduction, mainImage: mainImageUrl, sections: sectionResults });
-        console.log(blogData);
+        const blogData = yield models_1.Blog.create({
+            title,
+            introduction,
+            mainImage: mainImageUrl,
+            sections: sectionResults,
+        });
         return blogData;
     }
     catch (error) {

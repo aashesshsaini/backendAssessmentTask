@@ -41,7 +41,7 @@ const getCourses = (query) => __awaiter(void 0, void 0, void 0, function* () {
                 ] });
         }
         const [CourseListing, CourseCount] = yield Promise.all([
-            models_1.Course.find(filter, { title: 1, video: 1, duration: 1, price: 1, priceWithOffer: 1 }, (0, universalFunctions_1.paginationOptions)(page, limit)),
+            models_1.Course.find(filter, { title: 1, videos: 1, duration: 1, price: 1, priceWithOffer: 1 }, (0, universalFunctions_1.paginationOptions)(page, limit)),
             models_1.Course.countDocuments(filter),
         ]);
         const result = { CourseListing, CourseCount };

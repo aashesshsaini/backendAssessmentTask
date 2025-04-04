@@ -15,38 +15,87 @@ import uploadToS3 from "../../utils/s3Upload";
 //     // BucketUrl: config.S3Credentials.accessKeyId,
 //   });
 
-const createBlog = async (body: Dictionary, files:Dictionary) => {
-    const {title, introduction, sections} = body
+// const createBlog = async (body: Dictionary, files:Dictionary) => {
+//     const {title, introduction, sections} = body
+//     try {
+//   let mainImageUrl = "";
+//   if (files["mainImage"] && files["mainImage"][0]) {
+//     mainImageUrl = await uploadToS3(files["mainImage"][0]);
+//   }
+
+//   console.log(files, 'files....................')
+
+//   const sectionResults = await Promise.all(
+//     sections.map(async (section: any, index: number) => {
+//       const imageFieldName = `sections[${index}][image]`;
+//       let imageUrl = "";
+
+//       if (files[imageFieldName] && files[imageFieldName][0]) {
+//         imageUrl = await uploadToS3(files[imageFieldName][0]);
+//       }
+
+//       return {
+//         ...section,
+//         image: imageUrl,
+//       };
+//     })
+//   );
+//         console.log(body, "body.........")
+//         const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
+//         console.log(blogData)
+//         return blogData
+//     } catch (error: any) {
+//         console.log(error, "error...........")
+//         throw error
+//     }
+// }
+
+const createBlog = async (body: Dictionary, files: Dictionary) => {
+    const { title, introduction, sections } = body;
+  
+    // Convert file array to object grouped by fieldname
+    const groupedFiles: Record<string, any[]> = {};
+    files.forEach((file: any) => {
+      if (!groupedFiles[file.fieldname]) groupedFiles[file.fieldname] = [];
+      groupedFiles[file.fieldname].push(file);
+    });
+  
     try {
-  let mainImageUrl = "";
-  if (files["mainImage"] && files["mainImage"][0]) {
-    mainImageUrl = await uploadToS3(files["mainImage"][0]);
-  }
-
-  const sectionResults = await Promise.all(
-    sections.map(async (section: any, index: number) => {
-      const imageFieldName = `sections[${index}][image]`;
-      let imageUrl = "";
-
-      if (files[imageFieldName] && files[imageFieldName][0]) {
-        imageUrl = await uploadToS3(files[imageFieldName][0]);
+      let mainImageUrl = "";
+      if (groupedFiles["mainImage"] && groupedFiles["mainImage"][0]) {
+        mainImageUrl = await uploadToS3(groupedFiles["mainImage"][0]);
       }
-
-      return {
-        ...section,
-        image: imageUrl,
-      };
-    })
-  );
-        console.log(body, "body.........")
-        const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
-        console.log(blogData)
-        return blogData
+  
+      const sectionResults = await Promise.all(
+        sections.map(async (section: any, index: number) => {
+          const imageFieldName = `sections[${index}][image]`;
+          let imageUrl = "";
+  
+          if (groupedFiles[imageFieldName] && groupedFiles[imageFieldName][0]) {
+            imageUrl = await uploadToS3(groupedFiles[imageFieldName][0]);
+          }
+  
+          return {
+            ...section,
+            image: imageUrl,
+          };
+        })
+      );
+  
+      const blogData = await Blog.create({
+        title,
+        introduction,
+        mainImage: mainImageUrl,
+        sections: sectionResults,
+      });
+  
+      return blogData;
     } catch (error: any) {
-        console.log(error, "error...........")
-        throw error
+      console.log(error, "error...........");
+      throw error;
     }
-}
+  };
+  
 
 // const createCourse = async (body: Dictionary) => {
 //     // try {
