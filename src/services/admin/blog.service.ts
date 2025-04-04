@@ -5,6 +5,7 @@ import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
 import AWS from "aws-sdk";
 import config from "../../config/config"
+import uploadToS3 from "../../utils/s3Upload";
 
 // const s3 = new AWS.S3({
 //     accessKeyId: config.S3Credentials.accessKeyId,
@@ -14,10 +15,31 @@ import config from "../../config/config"
 //     // BucketUrl: config.S3Credentials.accessKeyId,
 //   });
 
-const createBlog = async (body: Dictionary) => {
+const createBlog = async (body: Dictionary, files:Dictionary) => {
+    const {title, introduction, sections} = body
     try {
+  let mainImageUrl = "";
+  if (files["mainImage"] && files["mainImage"][0]) {
+    mainImageUrl = await uploadToS3(files["mainImage"][0]);
+  }
+
+  const sectionResults = await Promise.all(
+    sections.map(async (section: any, index: number) => {
+      const imageFieldName = `sections[${index}][image]`;
+      let imageUrl = "";
+
+      if (files[imageFieldName] && files[imageFieldName][0]) {
+        imageUrl = await uploadToS3(files[imageFieldName][0]);
+      }
+
+      return {
+        ...section,
+        image: imageUrl,
+      };
+    })
+  );
         console.log(body, "body.........")
-        const blogData = await Blog.create(body)
+        const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
         console.log(blogData)
         return blogData
     } catch (error: any) {
@@ -82,10 +104,30 @@ const getBlog = async (query: Dictionary) => {
 
 
 
-const updateBlog = async (body: Dictionary) => {
+const updateBlog = async (body: Dictionary, files:Dictionary) => {
+    const { blogId, title, introduction, sections } = body
     try {
-        const { blogId, title, mainImage, introduction, sections } = body
-        const updatedBlogData = await Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage, introduction, sections}, { lean: true, new: true })
+        let mainImageUrl = "";
+        if (files["mainImage"] && files["mainImage"][0]) {
+          mainImageUrl = await uploadToS3(files["mainImage"][0]);
+        }
+      
+        const sectionResults = await Promise.all(
+          sections.map(async (section: any, index: number) => {
+            const imageFieldName = `sections[${index}][image]`;
+            let imageUrl = "";
+      
+            if (files[imageFieldName] && files[imageFieldName][0]) {
+              imageUrl = await uploadToS3(files[imageFieldName][0]);
+            }
+      
+            return {
+              ...section,
+              image: imageUrl,
+            };
+          })
+        );
+        const updatedBlogData = await Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage:mainImageUrl, introduction, sections:sectionResults}, { lean: true, new: true })
         if (!updatedBlogData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,

@@ -8,12 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogDetails = exports.deleteBlog = exports.updateBlog = exports.getBlog = exports.createBlog = void 0;
 const models_1 = require("../../models");
 const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
 const universalFunctions_1 = require("../../utils/universalFunctions");
+const s3Upload_1 = __importDefault(require("../../utils/s3Upload"));
 // const s3 = new AWS.S3({
 //     accessKeyId: config.S3Credentials.accessKeyId,
 //     secretAccessKey: config.S3Credentials.secretAccessKey,
@@ -21,10 +25,23 @@ const universalFunctions_1 = require("../../utils/universalFunctions");
 //     // Bucket: config.S3Credentials.accessKeyId,
 //     // BucketUrl: config.S3Credentials.accessKeyId,
 //   });
-const createBlog = (body) => __awaiter(void 0, void 0, void 0, function* () {
+const createBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, introduction, sections } = body;
     try {
+        let mainImageUrl = "";
+        if (files["mainImage"] && files["mainImage"][0]) {
+            mainImageUrl = yield (0, s3Upload_1.default)(files["mainImage"][0]);
+        }
+        const sectionResults = yield Promise.all(sections.map((section, index) => __awaiter(void 0, void 0, void 0, function* () {
+            const imageFieldName = `sections[${index}][image]`;
+            let imageUrl = "";
+            if (files[imageFieldName] && files[imageFieldName][0]) {
+                imageUrl = yield (0, s3Upload_1.default)(files[imageFieldName][0]);
+            }
+            return Object.assign(Object.assign({}, section), { image: imageUrl });
+        })));
         console.log(body, "body.........");
-        const blogData = yield models_1.Blog.create(body);
+        const blogData = yield models_1.Blog.create({ title, introduction, mainImage: mainImageUrl, sections });
         console.log(blogData);
         return blogData;
     }

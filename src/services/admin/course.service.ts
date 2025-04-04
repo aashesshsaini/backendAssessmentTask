@@ -3,48 +3,44 @@ import { STATUS_CODES, ERROR_MESSAGES } from "../../config/appConstant";
 import { OperationalError } from "../../utils/error";
 import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
-import AWS from "aws-sdk";
-import config from "../../config/config"
+import uploadToS3 from "../../utils/s3Upload"
 
-// const s3 = new AWS.S3({
-//     accessKeyId: config.S3Credentials.accessKeyId,
-//     secretAccessKey: config.S3Credentials.secretAccessKey,
-//     region:config.S3Credentials.region,
-//     // Bucket: config.S3Credentials.accessKeyId,
-//     // BucketUrl: config.S3Credentials.accessKeyId,
-//   });
-
-const createCourse = async (body: Dictionary) => {
+  const createCourse = async (body: Dictionary, file: Dictionary) => {
+    const { title, description, duration, price, priceWithOffer } = body;
     try {
-        console.log(body, "body.........")
-        const CourseData = await Course.create(body)
-        console.log(CourseData)
-        return CourseData
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: null,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+  
+      let videoUrls: string[] = [];
+  
+      if (file.video && file.video.length > 0) {
+        const files = file.video;
+        videoUrls = await Promise.all(files.map((file: any) => uploadToS3(file)));
+      }
+  
+      console.log(videoUrls, 'videoUrls................');
+  
+      const CourseData = await Course.create({
+        title,
+        description,
+        duration,
+        price,
+        priceWithOffer,
+        videos: videoUrls,
+      });
+  
+      console.log(CourseData);
+      return CourseData;
     } catch (error: any) {
-        console.log(error, "error...........")
-        throw error
+      console.log(error, 'error...........');
+      throw error;
     }
-}
-
-// const createCourse = async (body: Dictionary) => {
-//     // try {
-//     //     const params = {
-      
-//     //         Bucket: process.env.S3_BUCKET_NAME,
-//     //         Key: null,
-//     //         Body: file.buffer,
-//     //         ContentType: file.mimetype,
-//     //       };
-//     //     console.log(body, "body.........")
-//     //     const CourseData = await Course.create(body)
-//     //     console.log(CourseData)
-//     //     return CourseData
-//     // } catch (error: any) {
-//     //     console.log(error, "error...........")
-//     //     throw error
-//     // }
-// }
-
+  };
+  
 const getCourse = async (query: Dictionary) => {
     const { page = 0, limit = 10, search } = query
     try {
@@ -82,10 +78,23 @@ const getCourse = async (query: Dictionary) => {
 
 
 
-const updateCourse = async (body: Dictionary) => {
+const updateCourse = async (body: Dictionary, file:Dictionary) => {
     try {
-        const { courseId, title, description, video, duration, price, priceWithOffer } = body
-        const updatedCourseData = await Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, video, duration, price, priceWithOffer }, { lean: true, new: true })
+        const { courseId, title, description, duration, price, priceWithOffer } = body
+            const params = {
+              Bucket: process.env.S3_BUCKET_NAME,
+              Key: null,
+              Body: file.buffer,
+              ContentType: file.mimetype,
+            };
+        
+            let videoUrls: string[] = [];
+        
+            if (file.video && file.video.length > 0) {
+              const files = file.video;
+              videoUrls = await Promise.all(files.map((file: any) => uploadToS3(file)));
+            }
+        const updatedCourseData = await Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, video:videoUrls, duration, price, priceWithOffer }, { lean: true, new: true })
         if (!updatedCourseData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,

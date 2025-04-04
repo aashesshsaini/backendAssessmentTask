@@ -9,11 +9,12 @@ const course_validation_1 = __importDefault(require("../../validations/admin/cou
 const course_controller_1 = __importDefault(require("../../controllers/admin/course.controller"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const appConstant_1 = require("../../config/appConstant");
+const fileUpload_1 = __importDefault(require("../../middlewares/fileUpload"));
 const router = express_1.default.Router();
 router.route('/')
-    .post((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.createCourse), course_controller_1.default.createCourse)
+    .post((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), fileUpload_1.default.fields([{ name: "video", maxCount: 100 }]), (0, validate_1.validate)(course_validation_1.default.createCourse), course_controller_1.default.createCourse)
     .get((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.getCourse), course_controller_1.default.getCourse)
-    .put((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.updateCourse), course_controller_1.default.updateCourse)
+    .put((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), fileUpload_1.default.fields([{ name: "video", maxCount: 100 }]), (0, validate_1.validate)(course_validation_1.default.updateCourse), course_controller_1.default.updateCourse)
     .delete((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.deleteCourse), course_controller_1.default.deleteCourse);
 router.get('/courseDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.courseDetails), course_controller_1.default.courseDetails);
 router.get('/orderListing', (0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(course_validation_1.default.orderListing), course_controller_1.default.orderListing);

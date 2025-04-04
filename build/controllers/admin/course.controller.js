@@ -14,7 +14,8 @@ const response_1 = require("../../utils/response");
 const appConstant_1 = require("../../config/appConstant");
 const universalFunctions_1 = require("../../utils/universalFunctions");
 const createCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const CourseData = yield services_1.adminCourseService.createCourse(req.body);
+    const file = req.files;
+    const CourseData = yield services_1.adminCourseService.createCourse(req.body, file);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, CourseData);
 }));
 const getCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,7 +23,8 @@ const getCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(v
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, Courses);
 }));
 const updateCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedCourse = yield services_1.adminCourseService.updateCourse(req.body);
+    const file = req.files;
+    const updatedCourse = yield services_1.adminCourseService.updateCourse(req.body, file);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, updatedCourse);
 }));
 const deleteCourse = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {

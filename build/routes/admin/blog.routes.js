@@ -9,9 +9,10 @@ const blog_validation_1 = __importDefault(require("../../validations/admin/blog.
 const blog_controller_1 = __importDefault(require("../../controllers/admin/blog.controller"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const appConstant_1 = require("../../config/appConstant");
+const fileUpload_1 = __importDefault(require("../../middlewares/fileUpload"));
 const router = express_1.default.Router();
 router.route('/')
-    .post((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.createBlog), blog_controller_1.default.createBlog)
+    .post((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), fileUpload_1.default.any(), (0, validate_1.validate)(blog_validation_1.default.createBlog), blog_controller_1.default.createBlog)
     .get((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.getBlog), blog_controller_1.default.getBlog)
     .put((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.updateBlog), blog_controller_1.default.updateBlog)
     .delete((0, auth_1.default)(appConstant_1.USER_TYPE.ADMIN), (0, validate_1.validate)(blog_validation_1.default.deleteBlog), blog_controller_1.default.deleteBlog);

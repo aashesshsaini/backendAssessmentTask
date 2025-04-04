@@ -4,7 +4,7 @@ export interface CourseDocument extends Document {
     price: number;
     priceWithOffer: number;
     title: string;
-    video: string;
+    videos: string[];
     description: string;
     duration: string;
     isDeleted: false

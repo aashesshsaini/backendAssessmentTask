@@ -6,9 +6,11 @@ import {
     STATUS_CODES,
 } from "../../config/appConstant";
 import { catchAsync } from "../../utils/universalFunctions";
+import { Dictionary } from "../../types";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
-    const CourseData = await adminCourseService.createCourse(req.body);
+    const file = req.files as Dictionary
+    const CourseData = await adminCourseService.createCourse(req.body, file);
     return successResponse(
         req,
         res,
@@ -30,7 +32,8 @@ const getCourse = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateCourse = catchAsync(async (req: Request, res: Response) => {
-    const updatedCourse = await adminCourseService.updateCourse(req.body);
+    const file = req.files as Dictionary
+    const updatedCourse = await adminCourseService.updateCourse(req.body, file);
     return successResponse(
         req,
         res,

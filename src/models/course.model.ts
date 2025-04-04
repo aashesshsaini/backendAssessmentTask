@@ -13,10 +13,10 @@ const courseSchema = new Schema<CourseDocument>(
             trim: true,
             required: true
         },
-        video: {
+        videos: [{
             type: String,
             required: true
-        },
+        }],
         duration: {
             type: String
         },

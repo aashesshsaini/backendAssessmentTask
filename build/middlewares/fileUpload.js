@@ -4,18 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
-const path_1 = __importDefault(require("path"));
 // Allowed video formats
-const VIDEO_MIME_TYPES = ["video/mp4", "video/avi", "video/mov", "video/mkv"];
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-        const ext = path_1.default.extname(file.originalname);
-        cb(null, `${Date.now()}-${file.fieldname}${ext}`);
-    }
-});
+const VIDEO_MIME_TYPES = ["video/mp4", "video/avi", "video/mov", "video/mkv", "application/octet-stream", "image/jpg", "image/png"];
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, "uploads/"); 
+//     },
+//     filename: (req, file, cb) => {
+//         const ext = path.extname(file.originalname);
+//         cb(null, `${Date.now()}-${file.fieldname}${ext}`); 
+//     }
+// });
 const fileFilter = (req, file, cb) => {
     if (VIDEO_MIME_TYPES.includes(file.mimetype)) {
         cb(null, true);
@@ -24,9 +23,10 @@ const fileFilter = (req, file, cb) => {
         cb(new Error("Invalid file type. Only videos are allowed!"));
     }
 };
+const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 100 * 1024 * 1024 }
+    limits: { fileSize: 1000 * 1024 * 1024 }
 });
 exports.default = upload;

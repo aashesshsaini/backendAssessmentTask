@@ -2,22 +2,51 @@ import Joi from 'joi';
 import { JOI } from '../../config/appConstant';
 
 
-const createBlog= {
-body: Joi.object().keys({
-        title: Joi.string().required(),
-        mainImage: Joi.string(),
-        introduction: Joi.string().required(),
-        sections:Joi.array().items(
+// const createBlog= {
+// body: Joi.object().keys({
+//         title: Joi.string().required(),
+//         mainImage: Joi.string(),
+//         introduction: Joi.string().required(),
+//         sections:Joi.array().items(
+//             Joi.object().keys({
+//                 image: Joi.string(),
+//                 title: Joi.string(),
+//                 description: Joi.string(),
+//                 bullets: Joi.string(),
+//                 paragraph: Joi.string(),
+//             })
+//         )
+//     })
+// }
+
+export const createBlog = {
+    body: Joi.object().keys({
+      title: Joi.string().required(),
+      introduction: Joi.string().required(),
+             sections:Joi.array().items(
             Joi.object().keys({
-                image: Joi.string(),
                 title: Joi.string(),
                 description: Joi.string(),
                 bullets: Joi.string(),
                 paragraph: Joi.string(),
             })
-        )
-    })
-}
+             )
+    }),
+    files: Joi.object().keys({
+        file:Joi.array().items({
+            fieldname: Joi.string()
+            .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
+            .required(),
+          originalname: Joi.string().required(),
+          mimetype: Joi.string()
+            .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
+            .required(),
+          size: Joi.number().max(10 * 1024 * 1024).required(), // 10 MB max
+          buffer: Joi.any().required(),
+        })
+}),
+  };
+
 
 const getBlog = {
     query: Joi.object().keys({
@@ -29,20 +58,30 @@ const getBlog = {
 
 const updateBlog = {
     body: Joi.object().keys({
-        blogId:JOI.OBJECTID,
         title: Joi.string(),
-        mainImage: Joi.string(),
         introduction: Joi.string(),
-        sections:Joi.array().items(
-            Joi.object().keys({
-                image: Joi.string(),
-                title: Joi.string(),
-                description: Joi.string(),
-                bullets: Joi.string(),
-                paragraph: Joi.string(),
-            })
-        )
-    })
+               sections:Joi.array().items(
+              Joi.object().keys({
+                  title: Joi.string(),
+                  description: Joi.string(),
+                  bullets: Joi.string(),
+                  paragraph: Joi.string(),
+              })
+               )
+      }),
+      files: Joi.object().keys({
+          file:Joi.array().items({
+              fieldname: Joi.string()
+              .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/)
+              ,
+            originalname: Joi.string(),
+            mimetype: Joi.string()
+              .valid("image/jpeg", "image/png", "image/webp", "image/jpg")
+              ,
+            size: Joi.number().max(10 * 1024 * 1024), // 10 MB max
+            buffer: Joi.any(),
+          })
+  }),
 }
 
 

@@ -35,10 +35,10 @@ const courseSchema = new mongoose_1.Schema({
         trim: true,
         required: true
     },
-    video: {
-        type: String,
-        required: true
-    },
+    videos: [{
+            type: String,
+            required: true
+        }],
     duration: {
         type: String
     },
