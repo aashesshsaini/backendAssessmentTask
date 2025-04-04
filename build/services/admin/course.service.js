@@ -88,7 +88,7 @@ const updateCourse = (body, file) => __awaiter(void 0, void 0, void 0, function*
             const files = file.video;
             videoUrls = yield Promise.all(files.map((file) => (0, s3Upload_1.default)(file)));
         }
-        const updatedCourseData = yield models_1.Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, video: videoUrls, duration, price, priceWithOffer }, { lean: true, new: true });
+        const updatedCourseData = yield models_1.Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, videos: videoUrls, duration, price, priceWithOffer }, { lean: true, new: true });
         if (!updatedCourseData) {
             throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.COURSE_NOT_FOUND);
         }

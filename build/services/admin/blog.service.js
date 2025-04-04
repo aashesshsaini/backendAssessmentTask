@@ -41,7 +41,7 @@ const createBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* 
             return Object.assign(Object.assign({}, section), { image: imageUrl });
         })));
         console.log(body, "body.........");
-        const blogData = yield models_1.Blog.create({ title, introduction, mainImage: mainImageUrl, sections });
+        const blogData = yield models_1.Blog.create({ title, introduction, mainImage: mainImageUrl, sections: sectionResults });
         console.log(blogData);
         return blogData;
     }
@@ -92,10 +92,22 @@ const getBlog = (query) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getBlog = getBlog;
-const updateBlog = (body) => __awaiter(void 0, void 0, void 0, function* () {
+const updateBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* () {
+    const { blogId, title, introduction, sections } = body;
     try {
-        const { blogId, title, mainImage, introduction, sections } = body;
-        const updatedBlogData = yield models_1.Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage, introduction, sections }, { lean: true, new: true });
+        let mainImageUrl = "";
+        if (files["mainImage"] && files["mainImage"][0]) {
+            mainImageUrl = yield (0, s3Upload_1.default)(files["mainImage"][0]);
+        }
+        const sectionResults = yield Promise.all(sections.map((section, index) => __awaiter(void 0, void 0, void 0, function* () {
+            const imageFieldName = `sections[${index}][image]`;
+            let imageUrl = "";
+            if (files[imageFieldName] && files[imageFieldName][0]) {
+                imageUrl = yield (0, s3Upload_1.default)(files[imageFieldName][0]);
+            }
+            return Object.assign(Object.assign({}, section), { image: imageUrl });
+        })));
+        const updatedBlogData = yield models_1.Blog.findOneAndUpdate({ _id: blogId, isDeleted: false }, { title, mainImage: mainImageUrl, introduction, sections: sectionResults }, { lean: true, new: true });
         if (!updatedBlogData) {
             throw new error_1.OperationalError(appConstant_1.STATUS_CODES.ACTION_FAILED, appConstant_1.ERROR_MESSAGES.BLOG_NOT_FOUND);
         }

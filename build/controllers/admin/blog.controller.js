@@ -23,7 +23,8 @@ const getBlog = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(voi
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, Courses);
 }));
 const updateBlog = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedCourse = yield services_1.adminBlogService.updateBlog(req.body);
+    const files = req.files;
+    const updatedCourse = yield services_1.adminBlogService.updateBlog(req.body, files);
     return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, updatedCourse);
 }));
 const deleteBlog = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {

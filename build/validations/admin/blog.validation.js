@@ -27,7 +27,6 @@ exports.createBlog = {
         title: joi_1.default.string().required(),
         introduction: joi_1.default.string().required(),
         sections: joi_1.default.array().items(joi_1.default.object().keys({
-            image: joi_1.default.string(),
             title: joi_1.default.string(),
             description: joi_1.default.string(),
             bullets: joi_1.default.string(),
@@ -57,18 +56,26 @@ const getBlog = {
 };
 const updateBlog = {
     body: joi_1.default.object().keys({
-        blogId: appConstant_1.JOI.OBJECTID,
         title: joi_1.default.string(),
-        mainImage: joi_1.default.string(),
         introduction: joi_1.default.string(),
         sections: joi_1.default.array().items(joi_1.default.object().keys({
-            image: joi_1.default.string(),
             title: joi_1.default.string(),
             description: joi_1.default.string(),
             bullets: joi_1.default.string(),
             paragraph: joi_1.default.string(),
         }))
-    })
+    }),
+    files: joi_1.default.object().keys({
+        file: joi_1.default.array().items({
+            fieldname: joi_1.default.string()
+                .pattern(/^mainImage$|^sections\[\d+\]\[image\]$/),
+            originalname: joi_1.default.string(),
+            mimetype: joi_1.default.string()
+                .valid("image/jpeg", "image/png", "image/webp", "image/jpg"),
+            size: joi_1.default.number().max(10 * 1024 * 1024), // 10 MB max
+            buffer: joi_1.default.any(),
+        })
+    }),
 };
 const deleteBlog = {
     query: joi_1.default.object().keys({

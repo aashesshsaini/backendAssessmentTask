@@ -94,7 +94,7 @@ const updateCourse = async (body: Dictionary, file:Dictionary) => {
               const files = file.video;
               videoUrls = await Promise.all(files.map((file: any) => uploadToS3(file)));
             }
-        const updatedCourseData = await Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, video:videoUrls, duration, price, priceWithOffer }, { lean: true, new: true })
+        const updatedCourseData = await Course.findOneAndUpdate({ _id: courseId, isDeleted: false }, { title, description, videos:videoUrls, duration, price, priceWithOffer }, { lean: true, new: true })
         if (!updatedCourseData) {
             throw new OperationalError(
                 STATUS_CODES.ACTION_FAILED,
