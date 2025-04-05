@@ -15,6 +15,6 @@ router.get('/courseDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), 
 router.post('/createOrder', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(course_validation_1.default.createOrder), course_controller_1.default.createOrder);
 router.post('/webhook', course_controller_1.default.webhook);
 router.get('/myCourses', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(course_validation_1.default.myCourses), course_controller_1.default.myCourses);
-router.get('/blogs', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(course_validation_1.default.getBlogs), course_controller_1.default.getBlogs);
-router.get('/blogDetails', (0, auth_1.default)(appConstant_1.USER_TYPE.USER), (0, validate_1.validate)(course_validation_1.default.blogDetails), course_controller_1.default.blogDetails);
+router.get('/blogs', (0, validate_1.validate)(course_validation_1.default.getBlogs), course_controller_1.default.getBlogs);
+router.get('/blogDetails', (0, validate_1.validate)(course_validation_1.default.blogDetails), course_controller_1.default.blogDetails);
 exports.default = router;

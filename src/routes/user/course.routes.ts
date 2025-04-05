@@ -18,9 +18,9 @@ router.post('/webhook', userCourseController.webhook)
 
 router.get('/myCourses', auth(USER_TYPE.USER), validate(validation.myCourses), userCourseController.myCourses)
 
-router.get('/blogs', auth(USER_TYPE.USER), validate(validation.getBlogs), userCourseController.getBlogs)
+router.get('/blogs', validate(validation.getBlogs), userCourseController.getBlogs)
 
-router.get('/blogDetails', auth(USER_TYPE.USER), validate(validation.blogDetails), userCourseController.blogDetails)
+router.get('/blogDetails', validate(validation.blogDetails), userCourseController.blogDetails)
 
 
 
