@@ -9,42 +9,48 @@ import { Dictionary } from "../types";
         region:config.S3Credentials.region,
       })
 
-const uploadToS3 = async (file:Dictionary) => {
-    try {
-      if (!file || !file.originalname) {
-        throw new Error("File is undefined or has no originalname property.");
-      }
-  
-      console.log(config.S3Credentials.bucket);
-      const ext = path.extname(file.originalname.toString());
-      const params = {
-        
-        Bucket: config.S3Credentials.bucket as any,
-        Key: "",
-        Body: file.buffer,
-        ContentType: file.mimetype,
+      const uploadToS3 = async (file: Dictionary) => {
+        try {
+          if (!file || !file.originalname) {
+            throw new Error("File is undefined or has no originalname property.");
+          }
+      
+          const ext = path.extname(file.originalname.toString());
+          const timestamp = Date.now();
+      
+          let keyName = "";
+          const fieldName = file.fieldname;
+      
+          if (fieldName === "mainImage") {
+            keyName = `uploads/blogMainImages/${timestamp}${ext}`;
+          } else if (fieldName === "video") {
+            keyName = `uploads/courseVideos/${timestamp}${ext}`;
+          } else if (/^sections\[\d+\]\[image\]$/.test(fieldName)) {
+            keyName = `uploads/sectionImages/${timestamp}${ext}`;
+          } else {
+            // default folder if needed
+            keyName = `uploads/others/${timestamp}${ext}`;
+          }
+      
+          const params = {
+            Bucket: config.S3Credentials.bucket as string,
+            Key: keyName,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          };
+      
+          console.log("Uploading to bucket:", params.Bucket);
+          console.log("fieldName:", fieldName);
+          console.log("Key Name:", keyName);
+      
+          const data = await s3.upload(params).promise();
+          return data.Location;
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          throw error;
+        }
       };
-  
-      var keyName:string="";
-  
-            if (
-              file.fieldname === "video"
-            ) {
-              keyName = `uploads/${Date.now()}${ext}`;
-            }  
-  
-  
-      console.log("Key Name:", keyName);
-  
-      params.Key = keyName;
-      const data = await s3.upload(params).promise();
-      console.log("File uploaded successfully. Location:", data.Location);
-      return data.Location;
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error;
-    }
-  };
+      
 
   export default uploadToS3;
   

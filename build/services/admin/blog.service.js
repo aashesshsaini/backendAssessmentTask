@@ -18,46 +18,8 @@ const appConstant_1 = require("../../config/appConstant");
 const error_1 = require("../../utils/error");
 const universalFunctions_1 = require("../../utils/universalFunctions");
 const s3Upload_1 = __importDefault(require("../../utils/s3Upload"));
-// const s3 = new AWS.S3({
-//     accessKeyId: config.S3Credentials.accessKeyId,
-//     secretAccessKey: config.S3Credentials.secretAccessKey,
-//     region:config.S3Credentials.region,
-//     // Bucket: config.S3Credentials.accessKeyId,
-//     // BucketUrl: config.S3Credentials.accessKeyId,
-//   });
-// const createBlog = async (body: Dictionary, files:Dictionary) => {
-//     const {title, introduction, sections} = body
-//     try {
-//   let mainImageUrl = "";
-//   if (files["mainImage"] && files["mainImage"][0]) {
-//     mainImageUrl = await uploadToS3(files["mainImage"][0]);
-//   }
-//   console.log(files, 'files....................')
-//   const sectionResults = await Promise.all(
-//     sections.map(async (section: any, index: number) => {
-//       const imageFieldName = `sections[${index}][image]`;
-//       let imageUrl = "";
-//       if (files[imageFieldName] && files[imageFieldName][0]) {
-//         imageUrl = await uploadToS3(files[imageFieldName][0]);
-//       }
-//       return {
-//         ...section,
-//         image: imageUrl,
-//       };
-//     })
-//   );
-//         console.log(body, "body.........")
-//         const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
-//         console.log(blogData)
-//         return blogData
-//     } catch (error: any) {
-//         console.log(error, "error...........")
-//         throw error
-//     }
-// }
 const createBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, introduction, sections } = body;
-    // Convert file array to object grouped by fieldname
     const groupedFiles = {};
     files.forEach((file) => {
         if (!groupedFiles[file.fieldname])
@@ -91,23 +53,6 @@ const createBlog = (body, files) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createBlog = createBlog;
-// const createCourse = async (body: Dictionary) => {
-//     // try {
-//     //     const params = {
-//     //         Bucket: process.env.S3_BUCKET_NAME,
-//     //         Key: null,
-//     //         Body: file.buffer,
-//     //         ContentType: file.mimetype,
-//     //       };
-//     //     console.log(body, "body.........")
-//     //     const CourseData = await Course.create(body)
-//     //     console.log(CourseData)
-//     //     return CourseData
-//     // } catch (error: any) {
-//     //     console.log(error, "error...........")
-//     //     throw error
-//     // }
-// }
 const getBlog = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const { page = 0, limit = 10, search } = query;
     try {

@@ -3,57 +3,11 @@ import { STATUS_CODES, ERROR_MESSAGES } from "../../config/appConstant";
 import { OperationalError } from "../../utils/error";
 import { Dictionary } from "../../types";
 import { paginationOptions } from "../../utils/universalFunctions";
-import AWS from "aws-sdk";
-import config from "../../config/config"
 import uploadToS3 from "../../utils/s3Upload";
-
-// const s3 = new AWS.S3({
-//     accessKeyId: config.S3Credentials.accessKeyId,
-//     secretAccessKey: config.S3Credentials.secretAccessKey,
-//     region:config.S3Credentials.region,
-//     // Bucket: config.S3Credentials.accessKeyId,
-//     // BucketUrl: config.S3Credentials.accessKeyId,
-//   });
-
-// const createBlog = async (body: Dictionary, files:Dictionary) => {
-//     const {title, introduction, sections} = body
-//     try {
-//   let mainImageUrl = "";
-//   if (files["mainImage"] && files["mainImage"][0]) {
-//     mainImageUrl = await uploadToS3(files["mainImage"][0]);
-//   }
-
-//   console.log(files, 'files....................')
-
-//   const sectionResults = await Promise.all(
-//     sections.map(async (section: any, index: number) => {
-//       const imageFieldName = `sections[${index}][image]`;
-//       let imageUrl = "";
-
-//       if (files[imageFieldName] && files[imageFieldName][0]) {
-//         imageUrl = await uploadToS3(files[imageFieldName][0]);
-//       }
-
-//       return {
-//         ...section,
-//         image: imageUrl,
-//       };
-//     })
-//   );
-//         console.log(body, "body.........")
-//         const blogData = await Blog.create({title, introduction, mainImage:mainImageUrl, sections:sectionResults})
-//         console.log(blogData)
-//         return blogData
-//     } catch (error: any) {
-//         console.log(error, "error...........")
-//         throw error
-//     }
-// }
 
 const createBlog = async (body: Dictionary, files: Dictionary) => {
     const { title, introduction, sections } = body;
   
-    // Convert file array to object grouped by fieldname
     const groupedFiles: Record<string, any[]> = {};
     files.forEach((file: any) => {
       if (!groupedFiles[file.fieldname]) groupedFiles[file.fieldname] = [];
@@ -70,7 +24,6 @@ const createBlog = async (body: Dictionary, files: Dictionary) => {
         sections.map(async (section: any, index: number) => {
           const imageFieldName = `sections[${index}][image]`;
           let imageUrl = "";
-  
           if (groupedFiles[imageFieldName] && groupedFiles[imageFieldName][0]) {
             imageUrl = await uploadToS3(groupedFiles[imageFieldName][0]);
           }
@@ -96,26 +49,6 @@ const createBlog = async (body: Dictionary, files: Dictionary) => {
     }
   };
   
-
-// const createCourse = async (body: Dictionary) => {
-//     // try {
-//     //     const params = {
-      
-//     //         Bucket: process.env.S3_BUCKET_NAME,
-//     //         Key: null,
-//     //         Body: file.buffer,
-//     //         ContentType: file.mimetype,
-//     //       };
-//     //     console.log(body, "body.........")
-//     //     const CourseData = await Course.create(body)
-//     //     console.log(CourseData)
-//     //     return CourseData
-//     // } catch (error: any) {
-//     //     console.log(error, "error...........")
-//     //     throw error
-//     // }
-// }
-
 const getBlog = async (query: Dictionary) => {
     const { page = 0, limit = 10, search } = query
     try {
@@ -150,8 +83,6 @@ const getBlog = async (query: Dictionary) => {
         throw error
     }
 }
-
-
 
 const updateBlog = async (body: Dictionary, files:Dictionary) => {
     const { blogId, title, introduction, sections } = body

@@ -25,22 +25,33 @@ const uploadToS3 = (file) => __awaiter(void 0, void 0, void 0, function* () {
         if (!file || !file.originalname) {
             throw new Error("File is undefined or has no originalname property.");
         }
-        console.log(config_1.default.S3Credentials.bucket);
         const ext = path_1.default.extname(file.originalname.toString());
+        const timestamp = Date.now();
+        let keyName = "";
+        const fieldName = file.fieldname;
+        if (fieldName === "mainImage") {
+            keyName = `uploads/blogMainImages/${timestamp}${ext}`;
+        }
+        else if (fieldName === "video") {
+            keyName = `uploads/courseVideos/${timestamp}${ext}`;
+        }
+        else if (/^sections\[\d+\]\[image\]$/.test(fieldName)) {
+            keyName = `uploads/sectionImages/${timestamp}${ext}`;
+        }
+        else {
+            // default folder if needed
+            keyName = `uploads/others/${timestamp}${ext}`;
+        }
         const params = {
             Bucket: config_1.default.S3Credentials.bucket,
-            Key: "",
+            Key: keyName,
             Body: file.buffer,
             ContentType: file.mimetype,
         };
-        var keyName = "";
-        if (file.fieldname === "video") {
-            keyName = `uploads/${Date.now()}${ext}`;
-        }
+        console.log("Uploading to bucket:", params.Bucket);
+        console.log("fieldName:", fieldName);
         console.log("Key Name:", keyName);
-        params.Key = keyName;
         const data = yield s3.upload(params).promise();
-        console.log("File uploaded successfully. Location:", data.Location);
         return data.Location;
     }
     catch (error) {
