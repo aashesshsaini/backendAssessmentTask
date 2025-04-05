@@ -2,10 +2,6 @@ export * as tokenService from './token.service';
 export * as userAuthService from './user/auth.service';
 export * as adminAuthService from './admin/auth.service';
 export * as userManageService from './admin/userManage.service';
-export * as adminCourseService from './admin/course.service';
-export * as adminBlogService from './admin/blog.service';
-export * as userCourseService from './user/course.service';
-
 
 
 
