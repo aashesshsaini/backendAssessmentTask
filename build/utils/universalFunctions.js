@@ -9,7 +9,7 @@ const catchAsync = (fn) => (req, res, next) => {
 };
 exports.catchAsync = catchAsync;
 const paginationOptions = (page, limit) => {
-    return { sort: { _id: -1 }, skip: page * limit, limit, lean: true };
+    return { sort: { score: -1 }, skip: page * limit, limit, lean: true };
 };
 exports.paginationOptions = paginationOptions;
 const pick = (object, keys) => {

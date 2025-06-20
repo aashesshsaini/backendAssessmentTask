@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
+import cron from "node-cron";
 import redis from "../../utils/redis"
-import { PlayerScore } from "../../models";
+import { ArchivedScore, PlayerScore } from "../../models";
 import { paginationOptions } from "../../utils/universalFunctions";
 
 const getLeaderboardKey = (region:string, mode:string) =>
@@ -32,7 +33,6 @@ const updatePlayerScore = async (playerId: ObjectId, score: number, region: stri
         console.log(err, "error.........................")
     }
 };
-
 
 
 const getTopPlayers = async (
@@ -85,8 +85,32 @@ const getTopPlayers = async (
     }
 };
 
+export const archiveScoresAndReset = async () => {
+  const scores = await PlayerScore.find({});
+  for (const s of scores) {
+    await ArchivedScore.create({
+      player: s.player,
+      region: s.region,
+      mode: s.mode,
+      score: s.score,
+      date: new Date(),
+    });
+  }
+  await PlayerScore.deleteMany({});
+  await redis.flushDb();
+};
 
-export = {
+
+const scheduleArchiveScoresAndReset = async () => {
+    cron.schedule("0 0 * * *", async () => {
+        console.log("Running daily leaderboard archive...");
+        await archiveScoresAndReset();
+        console.log("Archived and reset leaderboard.");
+    });
+}
+
+export {
   updatePlayerScore,
   getTopPlayers,
+  scheduleArchiveScoresAndReset
 };

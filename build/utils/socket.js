@@ -16,13 +16,12 @@ exports.connectSocket = void 0;
 const socket_io_1 = require("socket.io");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config/config"));
-const error_1 = require("../utils/error");
-const appConstant_1 = require("../config/appConstant");
 const token_model_1 = __importDefault(require("../models/token.model"));
-let io;
+const appConstant_1 = require("../config/appConstant");
+const error_1 = require("../utils/error");
+const leaderBoard_service_1 = require("../services/player/leaderBoard.service");
 const connectSocket = (server) => {
-    const connectedUsers = new Map(); // { userId: socketId }
-    const adminSocket = { id: null }; // Store admin socket ID
+    const connectedPlayers = new Map(); // { playerId: socketId }
     const io = new socket_io_1.Server(server, {
         cors: {
             origin: "*",
@@ -41,19 +40,13 @@ const connectSocket = (server) => {
                     return next(new error_1.AuthFailedError(appConstant_1.ERROR_MESSAGES.AUTHENTICATION_FAILED, appConstant_1.STATUS_CODES.AUTH_FAILED));
                 }
                 const tokenDoc = yield token_model_1.default.findOne({ token }).lean();
-                if (!tokenDoc) {
+                if (!tokenDoc || decoded.role !== appConstant_1.USER_TYPE.PLAYER) {
                     return next(new error_1.AuthFailedError(appConstant_1.ERROR_MESSAGES.AUTHENTICATION_FAILED, appConstant_1.STATUS_CODES.AUTH_FAILED));
                 }
-                const userId = tokenDoc.user.toString();
-                socket.data = { decoded, userId, role: decoded.role };
-                if (decoded.role === appConstant_1.USER_TYPE.ADMIN) {
-                    adminSocket.id = socket.id;
-                    console.log(`[Socket] Admin connected: ${socket.id}`);
-                }
-                else {
-                    connectedUsers.set(userId, socket.id);
-                    console.log(`[Socket] User connected: ${userId} - ${socket.id}`);
-                }
+                const playerId = tokenDoc.player.toString();
+                socket.data = { decoded, playerId };
+                connectedPlayers.set(playerId, socket.id);
+                console.log(`[Socket] Player connected: ${playerId} - ${socket.id}`);
                 next();
             }));
         }
@@ -62,38 +55,32 @@ const connectSocket = (server) => {
         }
     }));
     io.on("connection", (socket) => {
-        console.log("[Socket] New connection established:", socket.id);
-        socket.on("placeOrder", (orderData) => {
-            const { userId, orderId } = orderData;
-            if (!userId || !orderId) {
-                console.log("[Socket] placeOrder error: Missing data", orderData);
-                return socket.emit("error", { message: "Order data is missing" });
+        console.log("[Socket] Player connection established:", socket.id);
+        socket.on("updateScore", (data) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a;
+            const { score, region, mode } = data;
+            const playerId = (_a = socket.data) === null || _a === void 0 ? void 0 : _a.playerId;
+            if (!playerId || !region || !mode || typeof score !== "number") {
+                return socket.emit("error", { message: "Invalid updateScore payload" });
             }
-            console.log(`[Socket] Order placed: User - ${userId}, Order - ${orderId}`);
-            const userSocketId = connectedUsers.get(userId);
-            if (userSocketId) {
-                io.to(userSocketId).emit("orderNotification", {
-                    message: "Your order has been placed!",
-                    orderId,
-                });
+            yield (0, leaderBoard_service_1.updatePlayerScore)(playerId, score, region, mode);
+            const topPlayers = yield (0, leaderBoard_service_1.getTopPlayers)(region, mode, 10);
+            io.emit("leaderboardUpdate", topPlayers);
+        }));
+        socket.on("getTopPlayers", (data) => __awaiter(void 0, void 0, void 0, function* () {
+            const { region, mode, limit = 10 } = data;
+            if (!region || !mode) {
+                return socket.emit("error", { message: "Missing region/mode" });
             }
-            if (adminSocket.id) {
-                io.to(adminSocket.id).emit("adminNotification", {
-                    message: "New order received!",
-                    orderId,
-                    userId,
-                });
-            }
-        });
+            const topPlayers = yield (0, leaderBoard_service_1.getTopPlayers)(region, mode, limit);
+            socket.emit("leaderboardData", topPlayers);
+        }));
         socket.on("disconnect", () => {
-            const { userId, role } = socket.data || {};
-            if (role === appConstant_1.USER_TYPE.ADMIN) {
-                adminSocket.id = null;
-                console.log("[Socket] Admin disconnected:", socket.id);
-            }
-            else if (userId && connectedUsers.has(userId)) {
-                connectedUsers.delete(userId);
-                console.log(`[Socket] User disconnected: ${userId}`);
+            var _a;
+            const playerId = (_a = socket.data) === null || _a === void 0 ? void 0 : _a.playerId;
+            if (playerId && connectedPlayers.has(playerId)) {
+                connectedPlayers.delete(playerId);
+                console.log(`[Socket] Player disconnected: ${playerId}`);
             }
         });
     });

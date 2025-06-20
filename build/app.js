@@ -59,7 +59,7 @@ app.use(body_parser_1.default.urlencoded({
 }));
 app.use(passport_1.default.initialize());
 (0, passport_2.default)(passport_1.default);
-app.use("/user/auth", common_1.authLimiter);
+app.use("/player/auth", common_1.authLimiter);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
 app.use("/", routes_1.default);
 app.use((req, res, next) => {

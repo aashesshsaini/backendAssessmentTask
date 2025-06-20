@@ -4,7 +4,7 @@ import config from "../config/config";
 import Token from "../models/token.model"; 
 import { ERROR_MESSAGES, STATUS_CODES, USER_TYPE } from "../config/appConstant";
 import { AuthFailedError, OperationalError } from "../utils/error";
-import playerLeaderBoardService from "../services/player/leaderBoard.service";
+import {getTopPlayers, updatePlayerScore} from "../services/player/leaderBoard.service";
 
 export const connectSocket = (server: any) => {
   const connectedPlayers = new Map<string, string>(); // { playerId: socketId }
@@ -72,8 +72,8 @@ export const connectSocket = (server: any) => {
         return socket.emit("error", { message: "Invalid updateScore payload" });
       }
 
-      await playerLeaderBoardService.updatePlayerScore(playerId, score, region, mode);
-      const topPlayers = await playerLeaderBoardService.getTopPlayers(region, mode, 10);
+      await updatePlayerScore(playerId, score, region, mode);
+      const topPlayers = await getTopPlayers(region, mode, 10);
       io.emit("leaderboardUpdate", topPlayers);
     });
 
@@ -84,7 +84,7 @@ export const connectSocket = (server: any) => {
         return socket.emit("error", { message: "Missing region/mode" });
       }
 
-      const topPlayers = await playerLeaderBoardService.getTopPlayers(region, mode, limit);
+      const topPlayers = await getTopPlayers(region, mode, limit);
       socket.emit("leaderboardData", topPlayers);
     });
 

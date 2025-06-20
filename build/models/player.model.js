@@ -24,33 +24,40 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const appConstant_1 = require("../config/appConstant");
-const tokenSchema = new mongoose_1.Schema({
-    token: { type: String, unique: true, required: true },
-    player: { type: mongoose_1.Schema.Types.ObjectId, ref: 'players' },
-    role: { type: String, enum: [...Object.values(appConstant_1.USER_TYPE)], required: true },
-    type: {
+const playerSchema = new mongoose_1.Schema({
+    fullName: {
         type: String,
-        enum: [...Object.values(appConstant_1.TOKEN_TYPE)],
-        required: true,
+        trim: true,
     },
-    expires: { type: Date, required: true },
-    device: {
-        type: {
-            type: String,
-            enum: [...Object.values(appConstant_1.DEVICE_TYPE)],
-        },
-        token: { type: String },
-        id: { type: String }
+    email: {
+        type: String,
     },
-    otp: {
-        code: String,
-        expiresAt: Date
+    password: {
+        type: String
     },
-    isDeleted: { type: Boolean, default: false },
-    blacklisted: { type: Boolean, default: false },
-}, {
-    timestamps: true,
-});
-const Token = mongoose_1.default.model('token', tokenSchema);
-exports.default = Token;
+    mobileNumber: {
+        type: String,
+    },
+    countryCode: {
+        type: String,
+    },
+    age: {
+        type: Number
+    },
+    gender: {
+        type: String
+    },
+    region: {
+        type: String
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+}, { timestamps: true });
+const Player = mongoose_1.default.model("players", playerSchema);
+exports.default = Player;

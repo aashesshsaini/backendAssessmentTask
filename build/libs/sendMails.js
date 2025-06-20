@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderPlacedEmail = exports.forgotPasswordEmail = exports.sendEmail = void 0;
+exports.forgotPasswordEmail = exports.sendEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const config_1 = __importDefault(require("../config/config"));
 const fs_1 = __importDefault(require("fs"));
@@ -54,20 +54,3 @@ const forgotPasswordEmail = (email, token, userName) => __awaiter(void 0, void 0
     yield (0, exports.sendEmail)(info);
 });
 exports.forgotPasswordEmail = forgotPasswordEmail;
-const orderPlacedEmail = (email, userName, productName, amount, quantity) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log({ email, userName, productName });
-    var info = {
-        from: config_1.default.smtp.email,
-        to: email,
-        subject: "Order Placed !!",
-        html: orderPlacedEmailTemplate({
-            title: "Order Placed",
-            userName,
-            productName,
-            amount,
-            quantity
-        }),
-    };
-    yield (0, exports.sendEmail)(info);
-});
-exports.orderPlacedEmail = orderPlacedEmail;

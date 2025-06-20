@@ -24,33 +24,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const appConstant_1 = require("../config/appConstant");
-const tokenSchema = new mongoose_1.Schema({
-    token: { type: String, unique: true, required: true },
-    player: { type: mongoose_1.Schema.Types.ObjectId, ref: 'players' },
-    role: { type: String, enum: [...Object.values(appConstant_1.USER_TYPE)], required: true },
-    type: {
+const archivedScoreSchema = new mongoose_1.Schema({
+    player: {
+        type: mongoose_1.Schema.Types.ObjectId, ref: 'players'
+    },
+    region: {
         type: String,
-        enum: [...Object.values(appConstant_1.TOKEN_TYPE)],
-        required: true,
+        trim: true,
     },
-    expires: { type: Date, required: true },
-    device: {
-        type: {
-            type: String,
-            enum: [...Object.values(appConstant_1.DEVICE_TYPE)],
-        },
-        token: { type: String },
-        id: { type: String }
+    mode: {
+        type: String,
     },
-    otp: {
-        code: String,
-        expiresAt: Date
+    score: {
+        type: Number
     },
-    isDeleted: { type: Boolean, default: false },
-    blacklisted: { type: Boolean, default: false },
-}, {
-    timestamps: true,
-});
-const Token = mongoose_1.default.model('token', tokenSchema);
-exports.default = Token;
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+}, { timestamps: true });
+const ArchivedScore = mongoose_1.default.model("archivedScores", archivedScoreSchema);
+archivedScoreSchema.index({ player: 1, createdAt: 1 });
+exports.default = ArchivedScore;

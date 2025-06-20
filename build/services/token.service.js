@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyResetPasswordToken = exports.verifyEmailToken = exports.generateAuthToken = void 0;
+exports.generateAuthToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const moment_1 = __importDefault(require("moment"));
 const mongodb_1 = require("mongodb");
@@ -29,7 +29,7 @@ const generateToken = (data, secret = config_1.default.jwt.secret) => {
     return jsonwebtoken_1.default.sign(payload, secret);
 };
 const saveToken = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     const dataToBeSaved = {
         expires: data.tokenExpires.toDate(),
         type: data.tokenType,
@@ -39,19 +39,16 @@ const saveToken = (data) => __awaiter(void 0, void 0, void 0, function* () {
         token: data === null || data === void 0 ? void 0 : data.accessToken,
         otp: data.otp
     };
-    if (data.userType === appConstant_1.USER_TYPE.ADMIN) {
-        dataToBeSaved.admin = (_a = data.user) === null || _a === void 0 ? void 0 : _a._id;
-    }
-    else {
-        data.userType === appConstant_1.USER_TYPE.USER;
-        dataToBeSaved.user = (_b = data.user) === null || _b === void 0 ? void 0 : _b._id;
+    if (data.userType === appConstant_1.USER_TYPE.PLAYER) {
+        data.userType === appConstant_1.USER_TYPE.PLAYER;
+        dataToBeSaved.player = (_a = data.player) === null || _a === void 0 ? void 0 : _a._id;
         ;
     }
     const tokenDoc = yield models_1.Token.create(dataToBeSaved);
     console.log(tokenDoc, "tokenDoc.....");
     return tokenDoc;
 });
-const generateAuthToken = (userType, user, deviceToken, deviceType, deviceId, otp) => __awaiter(void 0, void 0, void 0, function* () {
+const generateAuthToken = (userType, player, deviceToken, deviceType, deviceId, otp) => __awaiter(void 0, void 0, void 0, function* () {
     const tokenExpires = (0, moment_1.default)().add(config_1.default.jwt.accessExpirationMinutes, 'days');
     const tokenId = new mongodb_1.ObjectId();
     const accessToken = generateToken({
@@ -73,7 +70,7 @@ const generateAuthToken = (userType, user, deviceToken, deviceType, deviceId, ot
         deviceId,
         tokenType: appConstant_1.TOKEN_TYPE.ACCESS,
         userType,
-        user,
+        player,
         otp
     });
     return {
@@ -82,36 +79,3 @@ const generateAuthToken = (userType, user, deviceToken, deviceType, deviceId, ot
     };
 });
 exports.generateAuthToken = generateAuthToken;
-const verifyEmailToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    console.log(token);
-    const payload = jsonwebtoken_1.default.verify(token, (_a = config_1.default === null || config_1.default === void 0 ? void 0 : config_1.default.jwt) === null || _a === void 0 ? void 0 : _a.secret);
-    try {
-        if (payload) {
-            const tokenData = yield models_1.Token.findOne({ _id: payload === null || payload === void 0 ? void 0 : payload.id, isDeleted: false });
-            return tokenData || null;
-        }
-    }
-    catch (error) {
-        console.log(error);
-        return null;
-    }
-});
-exports.verifyEmailToken = verifyEmailToken;
-const verifyResetPasswordToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const payload = jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret);
-        console.log(payload, 'payload............');
-        const tokenData = yield models_1.Token.findOne({
-            _id: payload === null || payload === void 0 ? void 0 : payload.id,
-            isDeleted: false,
-            // expires: { $gte: new Date() },
-        }).populate('user');
-        console.log(tokenData, "tokenData");
-        return tokenData;
-    }
-    catch (error) {
-        throw error;
-    }
-});
-exports.verifyResetPasswordToken = verifyResetPasswordToken;

@@ -27,15 +27,11 @@ const jwtVerify = (payload, done) => __awaiter(void 0, void 0, void 0, function*
         if (payload.type !== 'access') {
             throw new error_1.AuthFailedError();
         }
-        let token;
-        if (payload.role === appConstant_1.USER_TYPE.ADMIN) {
+        var token = null;
+        ;
+        if (payload.role === appConstant_1.USER_TYPE.PLAYER) {
             token = yield models_1.Token.findOne({ _id: payload.id, isDeleted: false })
-                .populate({ path: 'admin' })
-                .lean();
-        }
-        {
-            token = yield models_1.Token.findOne({ _id: payload.id, isDeleted: false })
-                .populate({ path: 'user' })
+                .populate({ path: 'player' })
                 .lean();
         }
         if (!token) {
