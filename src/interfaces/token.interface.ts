@@ -2,9 +2,7 @@ import { Document, Schema, Types } from "mongoose";
 
 export interface TokenDocument extends Document {
   token: string;
-  user: Schema.Types.ObjectId;
-  admin: Schema.Types.ObjectId;
-  serviceProvider: Schema.Types.ObjectId,
+  player: Schema.Types.ObjectId;
   role: string;
   type: string;
   expires: Date;

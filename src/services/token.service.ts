@@ -8,11 +8,10 @@ import { TOKEN_TYPE, USER_TYPE, STATUS_CODES, ERROR_MESSAGES } from '../config/a
 import { Token } from '../models';
 import { JwtPayload } from '../types';
 import { TokenDocument } from '../interfaces/token.interface';
-import { UserDocument } from '../interfaces/user.interface';
-import { AdminDocument } from '../interfaces/admin.interface';
+import { PlayerDocument } from '../interfaces/player.interface';
 
 interface Data {
-  user?: UserDocument | AdminDocument
+  player?: PlayerDocument 
   tokenExpires: moment.Moment;
   tokenType: string;
   tokenId: ObjectId;
@@ -22,17 +21,6 @@ interface Data {
   userType: string;
   accessToken?: string,
   otp?: { code: string, expiresAt: string }
-}
-
-interface TokenDataToBeSaved {
-  expires: Date;
-  type: string;
-  _id: ObjectId;
-  device: { type: string; token: string };
-  role: string;
-  token: string | undefined;
-  admin: ObjectId;
-  user: ObjectId;
 }
 
 
@@ -58,12 +46,10 @@ const saveToken = async (data: Data) => {
     otp: data.otp
   };
 
-  if (data.userType === USER_TYPE.ADMIN) {
-    dataToBeSaved.admin = (data.user as AdminDocument)?._id as Schema.Types.ObjectId;
-  } else {
-    data.userType === USER_TYPE.USER;
-    dataToBeSaved.user = (data.user as UserDocument)?._id as Schema.Types.ObjectId;;
-  }
+  if (data.userType === USER_TYPE.PLAYER) {
+    data.userType === USER_TYPE.PLAYER;
+    dataToBeSaved.player = (data.player as PlayerDocument)?._id as Schema.Types.ObjectId;;
+  } 
 
   const tokenDoc = await Token.create(dataToBeSaved);
   console.log(tokenDoc, "tokenDoc.....")
@@ -72,7 +58,7 @@ const saveToken = async (data: Data) => {
 
 const generateAuthToken = async (
   userType: string,
-  user: UserDocument | AdminDocument,
+  player: PlayerDocument,
   deviceToken: string,
   deviceType: string,
   deviceId: string,
@@ -99,7 +85,7 @@ const generateAuthToken = async (
     deviceId,
     tokenType: TOKEN_TYPE.ACCESS,
     userType,
-    user,
+    player,
     otp
   });
   return {
@@ -108,38 +94,4 @@ const generateAuthToken = async (
   };
 };
 
-
-const verifyEmailToken = async (token: string) => {
-  console.log(token);
-  const payload = jwt.verify(token, config?.jwt?.secret) as JwtPayload;
-  try {
-    if (payload) {
-      const tokenData = await Token.findOne({ _id: payload?.id, isDeleted: false });
-      return tokenData || null;
-    }
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-
-const verifyResetPasswordToken = async (token: string) => {
-  try {
-    const payload: JwtPayload = jwt.verify(token, config.jwt.secret) as JwtPayload;
-
-    console.log(payload, 'payload............')
-
-    const tokenData = await Token.findOne({
-      _id: payload?.id,
-      isDeleted: false,
-      // expires: { $gte: new Date() },
-    }).populate('user');
-    console.log(tokenData, "tokenData")
-    return tokenData;
-  } catch (error) {
-    throw error;
-  }
-
-}
-
-export { generateAuthToken, verifyEmailToken, verifyResetPasswordToken };
+export { generateAuthToken };

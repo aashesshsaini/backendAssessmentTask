@@ -1,5 +1,5 @@
 import Token from "./token.model";
-import User from "./user.model";
-import Admin from "./admin.model";
+import Player from "./player.model";
+import PlayerScore from "./playerScore.model";
 
-export { Token, User, Admin};
+export { Token, Player, PlayerScore};

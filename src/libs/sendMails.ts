@@ -47,19 +47,3 @@ export const forgotPasswordEmail = async (email: string, token: string, userName
     await sendEmail(info);
 };
 
-export const orderPlacedEmail = async (email: string, userName: string, productName: string, amount: number, quantity: number) => {
-    console.log({ email, userName, productName })
-    var info = {
-        from: config.smtp.email,
-        to: email,
-        subject: "Order Placed !!",
-        html: orderPlacedEmailTemplate({
-            title: "Order Placed",
-            userName,
-            productName,
-            amount,
-            quantity
-        }),
-    };
-    await sendEmail(info);
-};

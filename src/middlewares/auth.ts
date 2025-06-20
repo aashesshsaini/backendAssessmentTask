@@ -19,19 +19,15 @@ const verifyCallback = (req: Request, resolve: any, reject: any, expectedRole: s
       )
     );
   }
-
-  if (token.role === USER_TYPE.ADMIN && !token.admin) {
+  if (token.role === USER_TYPE.PLAYER && !token.player) {
+    console.log(token.player);
     return reject(new AuthFailedError());
   }
-  if (token.role === USER_TYPE.USER && !token.user) {
-    console.log(token.user);
-    return reject(new AuthFailedError());
-  }
-  if (token.role === USER_TYPE.USER) {
-    if (!token.user) {
+  if (token.role === USER_TYPE.PLAYER) {
+    if (!token.player) {
       return reject(new AuthFailedError());
     }
-    if (token.user.isDeleted) {
+    if (token.player.isDeleted) {
       return reject(
         new AuthFailedError(
           ERROR_MESSAGES.ACCOUNT_DELETED,
@@ -39,7 +35,7 @@ const verifyCallback = (req: Request, resolve: any, reject: any, expectedRole: s
         )
       );
     }
-    if (token.user.isBlocked) {
+    if (token.player.isBlocked) {
       return reject(
         new AuthFailedError(
           ERROR_MESSAGES.ACCOUNT_BLOCKED,
@@ -48,21 +44,6 @@ const verifyCallback = (req: Request, resolve: any, reject: any, expectedRole: s
       );
     }
   }
-
-  if (token.role === USER_TYPE.ADMIN) {
-    if (!token.admin) {
-      return reject(new AuthFailedError());
-    }
-    if (token.admin.isDeleted) {
-      return reject(
-        new AuthFailedError(
-          ERROR_MESSAGES.ACCOUNT_DELETED,
-          STATUS_CODES.ACTION_FAILED
-        )
-      );
-    }
-  }
-
   req.token = token;
   return resolve();
 };

@@ -6,8 +6,7 @@ import { TokenDocument } from '../interfaces/token.interface';
 const tokenSchema = new Schema<TokenDocument>(
   {
     token: { type: String, unique: true, required: true },
-    user: { type: Schema.Types.ObjectId, ref: 'users' },
-    admin: { type: Schema.Types.ObjectId, ref: 'admins' },
+    player: { type: Schema.Types.ObjectId, ref: 'players' },
     role: { type: String, enum: [...Object.values(USER_TYPE)], required: true },
     type: {
       type: String,

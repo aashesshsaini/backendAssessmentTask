@@ -12,7 +12,7 @@ const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Pro
 };
 
 const paginationOptions = (page: number, limit: number) => {
-  return { sort: { _id: -1 }, skip: page * limit, limit, lean: true };
+  return { sort: { score: -1 }, skip: page * limit, limit, lean: true };
 };
 
 const pick = (object: any, keys: string[]) => {

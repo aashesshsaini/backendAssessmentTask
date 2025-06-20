@@ -1,9 +1,7 @@
 import mongoose, { Types, Document, Schema } from "mongoose";
-import { USER_TYPE } from "../config/appConstant";
-import { UserDocument } from "../interfaces/user.interface";
-import { string } from "joi";
+import { PlayerDocument } from "../interfaces/player.interface";
 
-const userSchema = new Schema<UserDocument>(
+const playerSchema = new Schema<PlayerDocument>(
   {
     fullName: {
       type: String,
@@ -11,6 +9,9 @@ const userSchema = new Schema<UserDocument>(
     },
     email: {
       type: String,
+    },
+    password: {
+      type:String
     },
     mobileNumber: {
       type: String,
@@ -24,16 +25,10 @@ const userSchema = new Schema<UserDocument>(
     gender: {
       type: String
     },
-    stripeCustomerId: { type: String },
+    region: {
+      type: String
+    },
     isBlocked: {
-      type: Boolean,
-      default: false,
-    },
-    isCreatedProfileUser: {
-      type: Boolean,
-      default: false,
-    },
-    isPushNotification: {
       type: Boolean,
       default: false,
     },
@@ -45,6 +40,6 @@ const userSchema = new Schema<UserDocument>(
   { timestamps: true }
 );
 
-const User = mongoose.model<UserDocument>("users", userSchema);
+const Player = mongoose.model<PlayerDocument>("players", playerSchema);
 
-export default User;
+export default Player;

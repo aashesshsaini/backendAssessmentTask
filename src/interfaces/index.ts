@@ -1,5 +1,5 @@
 import { TokenDocument } from "./token.interface";
-import { UserDocument } from "./user.interface";
-import { AdminDocument } from "./admin.interface";
+import { PlayerDocument } from "./player.interface";
+import { PlayerScore } from "../models";
 
-export { TokenDocument, UserDocument, AdminDocument }
+export { TokenDocument, PlayerDocument, PlayerScore }

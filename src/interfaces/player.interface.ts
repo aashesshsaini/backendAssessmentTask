@@ -1,15 +1,14 @@
 import { Document } from "mongoose";
 
-export interface UserDocument extends Document {
+export interface PlayerDocument extends Document {
   fullName: string;
   email: string;
+  password: string;
   mobileNumber: string;
   countryCode: string;
   age: number;
   gender: string;
-  stripeCustomerId: string;
-  isPushNotification: boolean;
-  isCreatedProfileUser: boolean;
+  region: string;
   isBlocked: boolean;
   isDeleted: boolean;
 }

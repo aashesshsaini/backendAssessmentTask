@@ -19,15 +19,12 @@ const jwtVerify = async (payload: JwtPayload, done: VerifiedCallback) => {
       throw new AuthFailedError();
     }
 
-    let token: TokenDocument | null;
+    var token: TokenDocument | null = null;;
 
-    if (payload.role === USER_TYPE.ADMIN) {
+    if(payload.role === USER_TYPE.PLAYER)
+    {
       token = await Token.findOne({ _id: payload.id, isDeleted: false })
-        .populate({ path: 'admin' })
-        .lean();
-    }{
-      token = await Token.findOne({ _id: payload.id, isDeleted: false })
-        .populate({ path: 'user' })
+        .populate({ path: 'player' })
         .lean();
     }
 

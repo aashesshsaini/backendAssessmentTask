@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({
 app.use(passport.initialize());
 passportConfig(passport);
 
-app.use("/user/auth", authLimiter);
+app.use("/player/auth", authLimiter);
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 

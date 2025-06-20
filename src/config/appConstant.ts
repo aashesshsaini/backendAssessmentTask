@@ -8,8 +8,7 @@ const TOKEN_TYPE = {
 };
 
 const USER_TYPE = {
-  ADMIN: "admin",
-  USER: "user",
+  PLAYER: "player",
 };
 
 const DEVICE_TYPE = {
@@ -18,27 +17,20 @@ const DEVICE_TYPE = {
   WEB: "web",
 };
 
-const STATUS = {
-  PENDING: "pending",
-  ACCEPTED: "accepted",
-  REJECTED: "rejected",
-};
-
 const JOI = {
   EMAIL: Joi.string().email().lowercase().trim().required(),
   PASSWORD: Joi.string().min(8).required(),
   PHONENUMBER: Joi.string()
     .min(5)
     .max(15)
-    .pattern(/^[0-9]+$/)
-    .required(),
+    .pattern(/^[0-9]+$/),
   OBJECTID: Joi.string().custom(objectId).required(),
   LIMIT: Joi.number().default(10000),
   PAGE: Joi.number().default(0),
   DEVICE_TYPE: Joi.string()
     .valid(...Object.values(DEVICE_TYPE))
     .required(),
-  USER_TYPE: Joi.string().valid(USER_TYPE.USER, USER_TYPE.ADMIN).required(),
+  USER_TYPE: Joi.string().valid(USER_TYPE.PLAYER).required(),
 };
 
 const SUCCESS_MESSAGES = {
@@ -53,19 +45,13 @@ const ERROR_MESSAGES = {
   SERVER_ERROR: "Something went wrong, Please try again.",
   AUTHENTICATION_FAILED: "Please authenticate",
   UNAUTHORIZED: "You are not authorized to perform this action",
-  EMAIL_ALREADY_EXIST:
-    "This email already exists. Please try with another email",
-  MOBILE_ALREADY_EXIST:
-    "This mobile number already exists. Please try with another mobile number",
   EMAIL_NOT_FOUND: "Email not found",
   ACCOUNT_NOT_EXIST: "Account does not exist",
   WRONG_PASSWORD: "Password is Incorrect",
   ACCOUNT_DELETED: "Your account has been deleted",
   ACCOUNT_BLOCKED: "Your account has been blocked by Admin",
-  USER_NOT_FOUND: "User not found",
+  PLAYER_NOT_FOUND: "Player not found",
   FIELD_REQUIRED: "All the fields are required",
-  COURSE_NOT_FOUND: "Course not  found",
-  BLOG_NOT_FOUND: "Blog not  found"
 };
 
 const STATUS_CODES = {
@@ -88,25 +74,12 @@ const STATUS_CODES = {
   GATEWAY_TIMEOUT: 504,
 };
 
-const ORDER_STATUS = {
-  PENDING: "pending",
-  COMPLETED: "completed"
-}
-
-const CART_ACTION_CASE = {
-  ADDTOCART: "addToCart",
-  REMOVETOCART: "removeToCart"
-}
-
 export {
   TOKEN_TYPE,
   USER_TYPE,
   DEVICE_TYPE,
   JOI,
-  STATUS,
   SUCCESS_MESSAGES,
   ERROR_MESSAGES,
   STATUS_CODES,
-  ORDER_STATUS,
-  CART_ACTION_CASE
 };

@@ -24,18 +24,6 @@ const envVarsSchema = Joi.object({
   EMAIL: Joi.string().description("username for email server"),
   PASSWORD: Joi.string().description("password for email server"),
   API_BASE_URL: Joi.string().required().description("Api base url"),
-  ADMIN_BASE_URL: Joi.string().description("Admin pannel base url"),
-  STRIPE_SECRET_KEY: Joi.string().description("secret key for stripe"),
-  TWILLIO_ACCOUNT_SID: Joi.string().description("account sid for twillio"),
-  TWILLIO_AUTH_TOKEN: Joi.string().description('secret key for twillio'),
-  PHONE_NUMBER: Joi.string().description("phon enumber for twilio"),
-  ENVIRONMENT: Joi.string().valid("development", "production").required(),
-  BUCKET_ACCESS_KEY_ID: Joi.string().description("AWS S3 key id").required(),
-  BUCKET_SECRET_ACCESS_KEY: Joi.string().description("AWS S3 secret access key").required(),
-  BUCKET_REGION: Joi.string().description("AWS S3 region").required(),
-  BUCKET_NAME: Joi.string().description("AWS S3 bucket name").required(),
-  BUCKET_URL: Joi.string().description("AWS S3 bucket url").required(),
-
 }).unknown();
 
 const { value: envVars, error } = envVarsSchema
@@ -65,12 +53,8 @@ const config = {
     verifyEmailExpirationMinutes: envVars.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES,
   },
   baseurl: envVars.API_BASE_URL,
-  serverurl: envVars.SERVER_BASE_URL,
   smtp: { email: envVars.EMAIL, password: envVars.PASSWORD },
-  twilio: { accountSID: envVars.TWILLIO_ACCOUNT_SID, accountSecret: envVars.TWILLIO_AUTH_TOKEN, phoneNumber: envVars.PHONE_NUMBER },
-  stripeSecretKey: envVars.STRIPE_SECRET_KEY,
   env: envVars.ENVIRONMENT,
-  S3Credentials: {accessKeyId:envVars.BUCKET_ACCESS_KEY_ID, secretAccessKey:envVars.BUCKET_SECRET_ACCESS_KEY, region:envVars.BUCKET_REGION, bucket:envVars.BUCKET_NAME, bucketUrl:envVars.BUCKET_URL}
 };
 
 export default config;
