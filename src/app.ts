@@ -11,7 +11,7 @@ import i18n from "./middlewares/i18n"
 import routes from "./routes"
 import { errorHandler, routeNotFoundHandler } from "./middlewares/common"
 import swaggerUI from "swagger-ui-express"
-import swaggerDocs from "./swagger.json"
+// import swaggerDocs from "./swagger.json"
 
 const app = express();
 
@@ -39,7 +39,7 @@ passportConfig(passport);
 
 app.use("/player/auth", authLimiter);
 
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+// app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/", routes);
 
