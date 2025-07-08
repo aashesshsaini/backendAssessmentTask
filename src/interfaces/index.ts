@@ -1,6 +1,6 @@
 import { TokenDocument } from "./token.interface";
-import { PlayerDocument } from "./player.interface";
-import { PlayerScore } from "../models";
-import { ArchivedScoreDocument } from "./archivedScore.interface";
+import { UserDocument } from "./user.interface";
+import { CategoryDocument } from "./category.interface";
+import { ExpensesDocument } from "./expneses.interface";
 
-export { TokenDocument, PlayerDocument, PlayerScore, ArchivedScoreDocument }
+export { TokenDocument, UserDocument, CategoryDocument, ExpensesDocument };

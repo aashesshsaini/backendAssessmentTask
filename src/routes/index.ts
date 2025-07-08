@@ -1,20 +1,24 @@
-import express, { Router } from "express"
-import playerAuth from "./player/auth.routes"
-import userStatic from "./static.routes"
+import express, { Router } from "express";
+import userAuth from "./user/auth.routes";
+import userExpenses from "./user/expenses.routes";
+import userStatistics from "./user/statistic.routes";
 
 const router: Router = express.Router();
 
 const defaultRoutes = [
   {
-    path: "/player/auth",
-    route: playerAuth,
+    path: "/user/auth",
+    route: userAuth,
   },
   {
-    path: "/static",
-    route: userStatic,
+    path: "/user/expenses",
+    route: userExpenses,
+  },
+  {
+    path: "/user/statistic",
+    route: userStatistics,
   },
 ];
-
 
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);

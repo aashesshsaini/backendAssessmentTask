@@ -1,17 +1,14 @@
-import jwt from 'jsonwebtoken';
-import moment from 'moment';
-import { Document, Schema, Types } from "mongoose";
-import { ObjectId } from 'mongodb';
-import { OperationalError } from '../utils/error';
-import config from '../config/config';
-import { TOKEN_TYPE, USER_TYPE, STATUS_CODES, ERROR_MESSAGES } from '../config/appConstant';
-import { Token } from '../models';
-import { JwtPayload } from '../types';
-import { TokenDocument } from '../interfaces/token.interface';
-import { PlayerDocument } from '../interfaces/player.interface';
+import jwt from "jsonwebtoken";
+import moment from "moment";
+import { Schema } from "mongoose";
+import { ObjectId } from "mongodb";
+import config from "../config/config";
+import { TOKEN_TYPE, USER_TYPE } from "../config/appConstant";
+import { Token } from "../models";
+import { UserDocument, TokenDocument } from "../interfaces";
 
 interface Data {
-  player?: PlayerDocument 
+  user?: UserDocument;
   tokenExpires: moment.Moment;
   tokenType: string;
   tokenId: ObjectId;
@@ -19,12 +16,14 @@ interface Data {
   deviceType: string;
   deviceId: string;
   userType: string;
-  accessToken?: string,
-  otp?: { code: string, expiresAt: string }
+  accessToken?: string;
+  otp?: { code: string; expiresAt: string };
 }
 
-
-const generateToken = (data: Data, secret: string = config.jwt.secret): string => {
+const generateToken = (
+  data: Data,
+  secret: string = config.jwt.secret
+): string => {
   const payload = {
     exp: data.tokenExpires.unix(),
     type: data.tokenType,
@@ -40,31 +39,36 @@ const saveToken = async (data: Data) => {
     expires: data.tokenExpires.toDate(),
     type: data.tokenType,
     _id: data.tokenId,
-    device: { type: data.deviceType, token: data.deviceToken, id: data.deviceId },
+    device: {
+      type: data.deviceType,
+      token: data.deviceToken,
+      id: data.deviceId,
+    },
     role: data.userType,
     token: data?.accessToken,
-    otp: data.otp
+    otp: data.otp,
   };
 
-  if (data.userType === USER_TYPE.PLAYER) {
-    data.userType === USER_TYPE.PLAYER;
-    dataToBeSaved.player = (data.player as PlayerDocument)?._id as Schema.Types.ObjectId;;
-  } 
+  if (data.userType === USER_TYPE.USER) {
+    data.userType === USER_TYPE.USER;
+    dataToBeSaved.user = (data.user as UserDocument)
+      ?._id as Schema.Types.ObjectId;
+  }
 
   const tokenDoc = await Token.create(dataToBeSaved);
-  console.log(tokenDoc, "tokenDoc.....")
+  console.log(tokenDoc, "tokenDoc.....");
   return tokenDoc;
 };
 
 const generateAuthToken = async (
   userType: string,
-  player: PlayerDocument,
+  user: UserDocument,
   deviceToken: string,
   deviceType: string,
   deviceId: string,
-  otp?: { code: string, expiresAt: string }
+  otp?: { code: string; expiresAt: string }
 ): Promise<{ token: string; expires: Date }> => {
-  const tokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
+  const tokenExpires = moment().add(config.jwt.accessExpirationMinutes, "days");
   const tokenId = new ObjectId();
   const accessToken: string = generateToken({
     tokenExpires,
@@ -73,7 +77,7 @@ const generateAuthToken = async (
     tokenId,
     deviceToken,
     deviceType,
-    deviceId
+    deviceId,
     // user
   });
   await saveToken({
@@ -85,8 +89,8 @@ const generateAuthToken = async (
     deviceId,
     tokenType: TOKEN_TYPE.ACCESS,
     userType,
-    player,
-    otp
+    user,
+    otp,
   });
   return {
     token: accessToken,

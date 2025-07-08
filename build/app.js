@@ -29,7 +29,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const helmet = __importStar(require("helmet"));
 const passport_1 = __importDefault(require("passport"));
-const body_parser_1 = __importDefault(require("body-parser"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
@@ -38,8 +37,7 @@ const passport_2 = __importDefault(require("./config/passport"));
 const i18n_1 = __importDefault(require("./middlewares/i18n"));
 const routes_1 = __importDefault(require("./routes"));
 const common_2 = require("./middlewares/common");
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_json_1 = __importDefault(require("./swagger.json"));
+// import swaggerDocs from "./swagger.json"
 const app = (0, express_1.default)();
 const file = path_1.default.join(__dirname + "/../");
 app.use(express_1.default.json());
@@ -51,16 +49,10 @@ app.use((0, morgan_1.default)("dev"));
 app.use((0, cors_1.default)());
 app.use(helmet.default());
 app.options("*", (0, cors_1.default)());
-app.set("view engine", "hbs");
-app.use(body_parser_1.default.urlencoded({
-    limit: '50mb',
-    extended: true,
-    parameterLimit: 50000
-}));
 app.use(passport_1.default.initialize());
 (0, passport_2.default)(passport_1.default);
-app.use("/player/auth", common_1.authLimiter);
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
+app.use("/user/auth", common_1.authLimiter);
+// app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use("/", routes_1.default);
 app.use((req, res, next) => {
     (0, common_2.routeNotFoundHandler)(req, res, next);

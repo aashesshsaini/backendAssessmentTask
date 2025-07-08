@@ -1,12 +1,11 @@
-import mongoose, { Document, Schema, Types } from 'mongoose';
-import { DEVICE_TYPE, USER_TYPE, TOKEN_TYPE } from '../config/appConstant';
-import { TokenDocument } from '../interfaces/token.interface';
-
+import mongoose, { Document, Schema, Types } from "mongoose";
+import { DEVICE_TYPE, USER_TYPE, TOKEN_TYPE } from "../config/appConstant";
+import { TokenDocument } from "../interfaces/token.interface";
 
 const tokenSchema = new Schema<TokenDocument>(
   {
     token: { type: String, unique: true, required: true },
-    player: { type: Schema.Types.ObjectId, ref: 'players' },
+    user: { type: Schema.Types.ObjectId, ref: "users" },
     role: { type: String, enum: [...Object.values(USER_TYPE)], required: true },
     type: {
       type: String,
@@ -20,11 +19,7 @@ const tokenSchema = new Schema<TokenDocument>(
         enum: [...Object.values(DEVICE_TYPE)],
       },
       token: { type: String },
-      id: { type: String }
-    },
-    otp: {
-      code: String,
-      expiresAt: Date
+      id: { type: String },
     },
     isDeleted: { type: Boolean, default: false },
     blacklisted: { type: Boolean, default: false },
@@ -34,6 +29,6 @@ const tokenSchema = new Schema<TokenDocument>(
   }
 );
 
-const Token = mongoose.model<TokenDocument>('token', tokenSchema);
+const Token = mongoose.model<TokenDocument>("token", tokenSchema);
 
 export default Token;

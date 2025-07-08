@@ -19,15 +19,15 @@ const verifyCallback = (req: Request, resolve: any, reject: any, expectedRole: s
       )
     );
   }
-  if (token.role === USER_TYPE.PLAYER && !token.player) {
-    console.log(token.player);
+  if (token.role === USER_TYPE.USER && !token.user) {
+    console.log(token.user);
     return reject(new AuthFailedError());
   }
-  if (token.role === USER_TYPE.PLAYER) {
-    if (!token.player) {
+  if (token.role === USER_TYPE.USER) {
+    if (!token.user) {
       return reject(new AuthFailedError());
     }
-    if (token.player.isDeleted) {
+    if (token.user.isDeleted) {
       return reject(
         new AuthFailedError(
           ERROR_MESSAGES.ACCOUNT_DELETED,
@@ -35,7 +35,7 @@ const verifyCallback = (req: Request, resolve: any, reject: any, expectedRole: s
         )
       );
     }
-    if (token.player.isBlocked) {
+    if (token.user.isBlocked) {
       return reject(
         new AuthFailedError(
           ERROR_MESSAGES.ACCOUNT_BLOCKED,

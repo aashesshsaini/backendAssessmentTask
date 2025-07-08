@@ -1,7 +1,7 @@
 {
-  "name": "leaderboard-system",
+  "name": "backend-task-assessment",
   "version": "20.0.0",
-  "description": "leaderboard Backend API's",
+  "description": "Bckend-task-assessment Backend API's",
   "main": "index.js",
   "scripts": {
     "start": "node ./build/index.js",
@@ -19,6 +19,7 @@
     "@types/helmet": "^4.0.0",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/moment": "^2.13.0",
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/node-cron": "^3.0.11",

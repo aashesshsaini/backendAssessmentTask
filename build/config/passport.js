@@ -24,14 +24,13 @@ const jwtOptions = {
 const jwtVerify = (payload, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(payload);
-        if (payload.type !== 'access') {
+        if (payload.type !== "access") {
             throw new error_1.AuthFailedError();
         }
         var token = null;
-        ;
-        if (payload.role === appConstant_1.USER_TYPE.PLAYER) {
+        if (payload.role === appConstant_1.USER_TYPE.USER) {
             token = yield models_1.Token.findOne({ _id: payload.id, isDeleted: false })
-                .populate({ path: 'player' })
+                .populate({ path: "user" })
                 .lean();
         }
         if (!token) {
@@ -40,7 +39,7 @@ const jwtVerify = (payload, done) => __awaiter(void 0, void 0, void 0, function*
         done(null, token);
     }
     catch (error) {
-        console.log('errorrrrr', error);
+        console.log("errorrrrr", error);
         done(error, false);
     }
 });

@@ -1,11 +1,14 @@
-import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from "passport-jwt";
+import {
+  Strategy as JwtStrategy,
+  ExtractJwt,
+  VerifiedCallback,
+} from "passport-jwt";
 import config from "./config";
 import { TOKEN_TYPE, USER_TYPE } from "./appConstant";
 import { Token } from "../models";
 import { AuthFailedError } from "../utils/error";
-import { JwtPayload } from '../types';
-import { TokenDocument } from '../interfaces/token.interface';
-
+import { JwtPayload } from "../types";
+import { TokenDocument } from "../interfaces/token.interface";
 
 const jwtOptions = {
   secretOrKey: config.jwt.secret,
@@ -14,17 +17,16 @@ const jwtOptions = {
 
 const jwtVerify = async (payload: JwtPayload, done: VerifiedCallback) => {
   try {
-    console.log(payload)
-    if (payload.type !== 'access') {
+    console.log(payload);
+    if (payload.type !== "access") {
       throw new AuthFailedError();
     }
 
-    var token: TokenDocument | null = null;;
+    var token: TokenDocument | null = null;
 
-    if(payload.role === USER_TYPE.PLAYER)
-    {
+    if (payload.role === USER_TYPE.USER) {
       token = await Token.findOne({ _id: payload.id, isDeleted: false })
-        .populate({ path: 'player' })
+        .populate({ path: "user" })
         .lean();
     }
 
@@ -34,7 +36,7 @@ const jwtVerify = async (payload: JwtPayload, done: VerifiedCallback) => {
 
     done(null, token);
   } catch (error) {
-    console.log('errorrrrr', error);
+    console.log("errorrrrr", error);
     done(error, false);
   }
 };

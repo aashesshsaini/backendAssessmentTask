@@ -27,7 +27,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const appConstant_1 = require("../config/appConstant");
 const tokenSchema = new mongoose_1.Schema({
     token: { type: String, unique: true, required: true },
-    player: { type: mongoose_1.Schema.Types.ObjectId, ref: 'players' },
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "users" },
     role: { type: String, enum: [...Object.values(appConstant_1.USER_TYPE)], required: true },
     type: {
         type: String,
@@ -41,16 +41,12 @@ const tokenSchema = new mongoose_1.Schema({
             enum: [...Object.values(appConstant_1.DEVICE_TYPE)],
         },
         token: { type: String },
-        id: { type: String }
-    },
-    otp: {
-        code: String,
-        expiresAt: Date
+        id: { type: String },
     },
     isDeleted: { type: Boolean, default: false },
     blacklisted: { type: Boolean, default: false },
 }, {
     timestamps: true,
 });
-const Token = mongoose_1.default.model('token', tokenSchema);
+const Token = mongoose_1.default.model("token", tokenSchema);
 exports.default = Token;

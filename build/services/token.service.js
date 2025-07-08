@@ -34,22 +34,25 @@ const saveToken = (data) => __awaiter(void 0, void 0, void 0, function* () {
         expires: data.tokenExpires.toDate(),
         type: data.tokenType,
         _id: data.tokenId,
-        device: { type: data.deviceType, token: data.deviceToken, id: data.deviceId },
+        device: {
+            type: data.deviceType,
+            token: data.deviceToken,
+            id: data.deviceId,
+        },
         role: data.userType,
         token: data === null || data === void 0 ? void 0 : data.accessToken,
-        otp: data.otp
+        otp: data.otp,
     };
-    if (data.userType === appConstant_1.USER_TYPE.PLAYER) {
-        data.userType === appConstant_1.USER_TYPE.PLAYER;
-        dataToBeSaved.player = (_a = data.player) === null || _a === void 0 ? void 0 : _a._id;
-        ;
+    if (data.userType === appConstant_1.USER_TYPE.USER) {
+        data.userType === appConstant_1.USER_TYPE.USER;
+        dataToBeSaved.user = (_a = data.user) === null || _a === void 0 ? void 0 : _a._id;
     }
     const tokenDoc = yield models_1.Token.create(dataToBeSaved);
     console.log(tokenDoc, "tokenDoc.....");
     return tokenDoc;
 });
-const generateAuthToken = (userType, player, deviceToken, deviceType, deviceId, otp) => __awaiter(void 0, void 0, void 0, function* () {
-    const tokenExpires = (0, moment_1.default)().add(config_1.default.jwt.accessExpirationMinutes, 'days');
+const generateAuthToken = (userType, user, deviceToken, deviceType, deviceId, otp) => __awaiter(void 0, void 0, void 0, function* () {
+    const tokenExpires = (0, moment_1.default)().add(config_1.default.jwt.accessExpirationMinutes, "days");
     const tokenId = new mongodb_1.ObjectId();
     const accessToken = generateToken({
         tokenExpires,
@@ -58,7 +61,7 @@ const generateAuthToken = (userType, player, deviceToken, deviceType, deviceId, 
         tokenId,
         deviceToken,
         deviceType,
-        deviceId
+        deviceId,
         // user
     });
     yield saveToken({
@@ -70,8 +73,8 @@ const generateAuthToken = (userType, player, deviceToken, deviceType, deviceId, 
         deviceId,
         tokenType: appConstant_1.TOKEN_TYPE.ACCESS,
         userType,
-        player,
-        otp
+        user,
+        otp,
     });
     return {
         token: accessToken,

@@ -13,7 +13,7 @@ const TOKEN_TYPE = {
 };
 exports.TOKEN_TYPE = TOKEN_TYPE;
 const USER_TYPE = {
-    PLAYER: "player",
+    USER: "user",
 };
 exports.USER_TYPE = USER_TYPE;
 const DEVICE_TYPE = {
@@ -35,7 +35,7 @@ const JOI = {
     DEVICE_TYPE: joi_1.default.string()
         .valid(...Object.values(DEVICE_TYPE))
         .required(),
-    USER_TYPE: joi_1.default.string().valid(USER_TYPE.PLAYER).required(),
+    USER_TYPE: joi_1.default.string().valid(USER_TYPE.USER).required(),
 };
 exports.JOI = JOI;
 const SUCCESS_MESSAGES = {
@@ -55,7 +55,10 @@ const ERROR_MESSAGES = {
     WRONG_PASSWORD: "Password is Incorrect",
     ACCOUNT_DELETED: "Your account has been deleted",
     ACCOUNT_BLOCKED: "Your account has been blocked by Admin",
-    PLAYER_NOT_FOUND: "Player not found",
+    USER_NOT_FOUND: "User not found",
+    EXPENSES_NOT_FOUND: "Expenses not found",
+    CATEGORY_NOT_FOUND: "Category not found",
+    EMAIL_EXIST: "User already exist, please login",
     FIELD_REQUIRED: "All the fields are required",
 };
 exports.ERROR_MESSAGES = ERROR_MESSAGES;

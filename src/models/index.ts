@@ -1,6 +1,6 @@
 import Token from "./token.model";
-import Player from "./player.model";
-import PlayerScore from "./playerScore.model";
-import ArchivedScore from "./archivedScore.model";
+import User from "./user.model";
+import Category from "./category.model";
+import Expenses from "./expenses.model";
 
-export { Token, Player, PlayerScore, ArchivedScore};
+export { Token, User, Category, Expenses };

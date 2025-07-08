@@ -27,17 +27,11 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet.default());
 app.options("*", cors());
-app.set("view engine", "hbs");
 
-app.use(bodyParser.urlencoded({
-  limit: '50mb',
-  extended: true,
-  parameterLimit: 50000
-}));
 app.use(passport.initialize());
 passportConfig(passport);
 
-app.use("/player/auth", authLimiter);
+app.use("/user/auth", authLimiter);
 
 // app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 

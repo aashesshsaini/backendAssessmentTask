@@ -3,14 +3,9 @@ import { JOI } from "../../config/appConstant";
 
 const signup = {
   body: Joi.object().keys({
-    fullName: Joi.string().required(),
+    name: Joi.string().required(),
     email: JOI.EMAIL,
     password: JOI.PASSWORD,
-    mobileNumber: JOI.PHONENUMBER,
-    countryCode: Joi.string(),
-    age: Joi.number().required(),
-    gender: Joi.string().required().valid("Male", "Female", "Transgender"),
-    region: Joi.string().required(),
     deviceId: Joi.string(),
     deviceToken: Joi.string(),
     deviceType: JOI.DEVICE_TYPE

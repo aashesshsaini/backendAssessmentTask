@@ -23,8 +23,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userStatisticService = exports.userExpensesService = exports.userAuthService = exports.tokenService = void 0;
-exports.tokenService = __importStar(require("./token.service"));
-exports.userAuthService = __importStar(require("./user/auth.service"));
-exports.userExpensesService = __importStar(require("./user/expenses.service"));
-exports.userStatisticService = __importStar(require("./user/statistic.service"));
+const mongoose_1 = __importStar(require("mongoose"));
+const categorySchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+}, { timestamps: true });
+const Category = mongoose_1.default.model("categories", categorySchema);
+exports.default = Category;

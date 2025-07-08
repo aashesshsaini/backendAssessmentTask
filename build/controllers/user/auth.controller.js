@@ -14,8 +14,20 @@ const response_1 = require("../../utils/response");
 const appConstant_1 = require("../../config/appConstant");
 const universalFunctions_1 = require("../../utils/universalFunctions");
 const formatResponse_1 = require("../../utils/formatResponse");
+const signup = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = (yield services_1.userAuthService.signup(req.body));
+    const deviceToken = req.body.deviceToken;
+    const deviceType = req.body.deviceType;
+    const deviceId = req.body.deviceType;
+    const accessToken = yield services_1.tokenService.generateAuthToken(appConstant_1.USER_TYPE.USER, userData, deviceToken, deviceType, deviceId);
+    const formatUserData = (0, formatResponse_1.formatSignUpUser)(userData);
+    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, {
+        tokenData: accessToken,
+        userData: formatUserData,
+    });
+}));
 const login = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userData = yield services_1.userAuthService.login(req.body);
+    const userData = (yield services_1.userAuthService.login(req.body));
     const deviceToken = req.body.deviceToken;
     const deviceType = req.body.deviceType;
     const deviceId = req.body.deviceType;
@@ -28,57 +40,7 @@ const login = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 
         userData: formatUserData,
     });
 }));
-const verifyOtp = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield services_1.userAuthService.verifyOtp(req.body.code, req.token._id);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS);
-}));
-const resendOtp = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    yield services_1.userAuthService.resendOtp((_a = req.token) === null || _a === void 0 ? void 0 : _a.user);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS);
-}));
-const createProfile = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.token);
-    const userData = yield services_1.userAuthService.createProfile(req.body, req.token.user._id);
-    const formatUserData = (0, formatResponse_1.formatSignUpUser)(userData);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatUserData);
-}));
-const deleteAccount = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    yield services_1.userAuthService.deleteAccount((_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user, req.query);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.DELETE);
-}));
-const logout = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    yield services_1.userAuthService.logout((_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.LOGOUT);
-}));
-const editProfile = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const updatedProfileData = yield services_1.userAuthService.editProfile((_b = (_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id, req === null || req === void 0 ? void 0 : req.body);
-    const formatedUpdatedProfileData = (0, formatResponse_1.formatUser)(updatedProfileData);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatedUpdatedProfileData);
-}));
-const userInfo = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userInfo = yield services_1.userAuthService.userInfo((_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user, req.query);
-    const formatedUserInfo = (0, formatResponse_1.formatUser)(userInfo);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatedUserInfo);
-}));
-const pushNotificationStatus = (0, universalFunctions_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const userInfo = yield services_1.userAuthService.pushNotificationStatus((_b = (_a = req === null || req === void 0 ? void 0 : req.token) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id);
-    const formatedUserInfo = (0, formatResponse_1.formatUser)(userInfo);
-    return (0, response_1.successResponse)(req, res, appConstant_1.STATUS_CODES.SUCCESS, appConstant_1.SUCCESS_MESSAGES.SUCCESS, formatedUserInfo);
-}));
 exports.default = {
+    signup,
     login,
-    verifyOtp,
-    resendOtp,
-    createProfile,
-    deleteAccount,
-    logout,
-    editProfile,
-    userInfo,
-    pushNotificationStatus
 };
