@@ -12,8 +12,7 @@ This is a Node.js backend for tracking user expenses with analytics such as:
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/expense-tracker.git
-cd expense-tracker
+git clone https://github.com/aashesshsaini/backendAssessmentTask.git
 
 2. Install dependencies
 npm install
@@ -33,10 +32,11 @@ npm start
 | Method | Route                 | Description                           |
 | ------ | --------------------- | ------------------------------------- |
 | POST   | /user/auth/signup             | Signup a new user  
-| POST   | /user/login            | login user 
+| POST   | /user/auth/login            | login user 
 | POST   | /user/expenses             | Add a new expense                     |
 | PUT    | /user/expenses       | Update an existing expense            |
 | DELETE | /user/expenses       | Soft delete an expense                |
+| POST    | /user/expenses/category       | create a category            |
 | GET    | /user/statistic/topDays      | Top 3 spending days per user          |
 | GET    | /user/statistic/monthlyChange | Monthly % change in user spending     |
 | GET    | /user/statistic/prediction     | Predict next month spending (average) |
